@@ -1,0 +1,37 @@
+<modded_inputs>
+    <inputs>
+        <actions>
+            <input name="UGTRIG_Export" loc="Export Trigger JSON" />
+            <input name="UGTRIG_IncLength" loc="Increase Trigger Length" />
+            <input name="UGTRIG_DecLength" loc="Decrease Trigger Length" />
+            <input name="UGTRIG_IncWidth"  loc="Increase Trigger Width" />
+            <input name="UGTRIG_DecWidth"  loc="Decrease Trigger Width" />
+            <input name="UGTRIG_IncHeight" loc="Increase Trigger Height" />
+            <input name="UGTRIG_DecHeight" loc="Decrease Trigger Height" />
+        </actions>
+    </inputs>
+
+    <preset>
+        <input name="UGTRIG_Export">
+            <btn name="kF9"/>
+        </input>
+        <input name="UGTRIG_IncLength">
+            <btn name="kNUMPAD9"/>
+        </input>
+        <input name="UGTRIG_DecLength">
+            <btn name="kNUMPAD7"/>
+        </input>
+        <input name="UGTRIG_IncWidth">
+            <btn name="kNUMPAD6"/>
+        </input>
+        <input name="UGTRIG_DecWidth">
+            <btn name="kNUMPAD4"/>
+        </input>
+        <input name="UGTRIG_IncHeight">
+            <btn name="kNUMPAD3"/>
+        </input>
+        <input name="UGTRIG_DecHeight">
+            <btn name="kNUMPAD1"/>
+        </input>
+    </preset>
+</modded_inputs>
