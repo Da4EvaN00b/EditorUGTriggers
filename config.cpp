@@ -21,13 +21,23 @@ class CfgMods
 		extra = 0;
 		type = "mod";
 		inputs = "EditorUGTriggers/Scripts/Data/Inputs.xml";
-		dependencies[] = {"World"};
+		dependencies[] = {"Game","World","Mission"};
 		class defs
 		{
+			class gameScriptModule
+			{
+				value = "";
+				files[] = {"EditorUGTriggers/scripts/3_Game"};
+			};
 			class worldScriptModule
 			{
 				value = "";
 				files[] = {"EditorUGTriggers/scripts/4_World"};
+			};
+			class missionScriptModule
+			{
+				value = "";
+				files[] = {"EditorUGTriggers/scripts/5_Mission"};
 			};
 		};
 	};
@@ -39,6 +49,12 @@ class CfgVehicles
 	{
 		scope = 1;
 		displayName = "Editor UG Trigger";
-		model = "\EditorUGTriggers\models\1x1.p3d";
+		model = "EditorUGTriggers\models\1x1.p3d";
+	};
+	class UGBreadcrumb: HouseNoDestruct
+	{
+		scope = 1;
+		displayName = "Editor UG Breadcrumb";
+		model = "EditorUGTriggers\models\breadcrumb.p3d";
 	};
 };

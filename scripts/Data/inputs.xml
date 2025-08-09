@@ -2,6 +2,7 @@
     <inputs>
         <actions>
             <input name="UGTRIG_Export" loc="Export Trigger JSON" />
+            <input name="UGTRIG_Commit" loc="Create Test Triggers" />
             <input name="UGTRIG_IncLength" loc="Increase Trigger Length" />
             <input name="UGTRIG_DecLength" loc="Decrease Trigger Length" />
             <input name="UGTRIG_IncWidth"  loc="Increase Trigger Width" />
@@ -14,6 +15,9 @@
     <preset>
         <input name="UGTRIG_Export">
             <btn name="kF9"/>
+        </input>
+        <input name="UGTRIG_Commit">
+            <btn name="kF10"/>
         </input>
         <input name="UGTRIG_IncLength">
             <btn name="kNUMPAD9"/>
