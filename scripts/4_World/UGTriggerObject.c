@@ -70,6 +70,84 @@ class UGTriggerObject : Building
 		m_UndergroundTrigger.SetOrientation(GetOrientation());
 	}
 
+	void GetBreadcrumbs()
+	{
+		Print("[UG] GetBreadcrumbs: building and attaching breadcrumbs for " + this);
+
+		UndergroundTrigger t = GetLinkedTrigger();
+
+		if (!t) { CreateTriggerIfMissing(); t = GetLinkedTrigger(); if (!t) { Print("[UG][ERR] no trigger; abort"); return; } }
+
+		array<Object> results = new array<Object>();
+		vector center = GetPosition();
+
+		//Get all breadcrumbs within 150m of the trigger, we need to change this to actually only get the ones within the trigger bounds.
+
+		GetGame().GetObjectsAtPosition(center, 150.0, results, null);
+
+		ref array<ref JsonUndergroundAreaBreadcrumb> crumbs = new array<ref JsonUndergroundAreaBreadcrumb>();
+		foreach (Object obj : results)
+		{
+			if (!obj) continue;
+			//Eventually we will want to filter this to only include our UG breadcrumb object type.
+			if (obj.GetType() != "StaticObj_Misc_SewerCover") continue;
+
+			vector pos = obj.GetPosition();
+			float sc = obj.GetScale();
+
+			JsonUndergroundAreaBreadcrumb bc = new JsonUndergroundAreaBreadcrumb();
+			bc.Position = new array<float>();
+			bc.Position.Insert(pos[0]); bc.Position.Insert(pos[1]); bc.Position.Insert(pos[2]);
+
+			float acc = UG_MapScaleToEyeAcco(sc); 
+			bc.EyeAccommodation = acc;
+			//These will be determined in the properties dialog later
+			bc.UseRaycast = false;
+			bc.Radius    = -1.0;
+			bc.LightLerp = false;
+
+			Print("[UG] crumb pos=" + pos + " scale=" + sc + " -> acc=" + acc);
+			crumbs.Insert(bc);
+		}
+
+		Print("[UG] GetBreadcrumbs: sewer covers found=" + crumbs.Count());
+
+		if (!t.m_Data)
+		{
+			JsonUndergroundAreaTriggerData d = BuildJsonFromUG(this);
+			t.Init(d);
+			Print("[UG] GetBreadcrumbs: created data blob via BuildJsonFromUG");
+		}
+
+		if (crumbs.Count() >= 2)
+		{
+			t.m_Data.Breadcrumbs      = crumbs;
+			t.m_Data.UseLinePointFade = false; 
+			t.m_Type = EUndergroundTriggerType.TRANSITIONING;
+			Print("[UG] attached " + crumbs.Count() + " breadcrumbs; type=TRANSITIONING");
+		}
+		else
+		{
+			t.m_Data.Breadcrumbs = null;
+			t.m_Data.UseLinePointFade = false;
+			t.SetTypeForAccommodation(); 
+			Print("[UG][WARN] need >=2 breadcrumbs; cleared breadcrumb mode");
+		}
+
+	}
+
+
+	protected float UG_MapScaleToEyeAcco(float sc)
+	{
+		if (sc < 0.0) sc = 0.0;
+		if (sc > 1.0) sc = 1.0;
+
+		sc = Math.Round(sc * 100.0) / 100.0;
+
+		return sc;
+	}
+
+
 	protected void UpdateTriggerPoseOnly()
 	{
 		if (!m_UndergroundTrigger) return;

@@ -4,7 +4,6 @@ modded class Editor
 {
     override void ProcessInput(float dt, Input input)
     {
-        // Let the editor do all its normal logic first
         super.ProcessInput(dt, input);
 
         // --- Your UGTRIG custom keybinds ---
@@ -32,6 +31,10 @@ modded class Editor
             if (input_api.GetInputByName("UGTRIG_DecWidth").LocalPress())   triggerobj.TrigSize(0, 0, -UG_STEP);
             if (input_api.GetInputByName("UGTRIG_IncHeight").LocalPress())  triggerobj.TrigSize(0, UG_STEP, 0);
             if (input_api.GetInputByName("UGTRIG_DecHeight").LocalPress())  triggerobj.TrigSize(0, -UG_STEP, 0);
+
+            //Just for testing, Press Num Pad 5 to add breadcrumbs. Should be worked into the update loop later. 
+            if (input_api.GetInputByName("UGTRIG_AddBreadcrumbs").LocalPress())  UG_AddBreadCrumbs({triggerobj});
+
         }
 
         // --- Post-process fix so keyboard/mouse move keeps UGTriggerObject scale ---
@@ -40,6 +43,7 @@ modded class Editor
 
     void UG_ReapplyScaleForSelection()
     {
+      //  Print("[UGTriggerObject] Reapplying scale for selection...");
         EditorObjectMap selected = GetSelectedObjects();
         if (!selected || selected.Count() == 0) return;
 
@@ -62,15 +66,26 @@ modded class Editor
             m[0] = ax0 * s[0];
             m[1] = ax1 * s[1];
             m[2] = ax2 * s[2];
-
+    
             w.SetTransform(m);
             w.Update();
         }
     }
 
+    static void UG_AddBreadCrumbs(array<UGTriggerObject> ugs)
+    {
+        Print("[UGTriggerObject] UG_AddBreadCrumbs called for " + ugs.Count() + " UGTriggerObjects");
+        if (ugs.Count() == 0) return;
+        if (!GetGame().IsServer()) return;
 
-	void ExportUGTriggersToJSON()
-	{
+        foreach (UGTriggerObject ug : ugs) {
+            ug.GetBreadcrumbs(); 
+        }
+    }
+
+    void ExportUGTriggersToJSON()
+    {
+
 		Print("[UGTriggers] Begin Export");
 
 		ref UGTriggersExportRoot exportData = new UGTriggersExportRoot();
@@ -141,4 +156,58 @@ class UGTriggersExport
 class UGTriggersExportRoot
 {
 	ref array<ref UGTriggersExport> Triggers = new array<ref UGTriggersExport>();
+}
+
+static JsonUndergroundAreaTriggerData BuildJsonFromUG(UGTriggerObject ug)
+{
+    if (!ug) return null;
+
+    UndergroundTrigger t = ug.GetLinkedTrigger();
+
+    vector pos    = ug.GetPosition();
+    vector orient = ug.GetOrientation();
+    vector size   = ug.GetSize();
+
+    float acc = 1.0;
+    float interp = 1.0;
+    if (t) {
+        acc    = t.m_Accommodation;
+        interp = t.m_InterpolationSpeed;
+        // keep type consistent if you use it
+        t.SetTypeForAccommodation();
+    }
+
+    JsonUndergroundAreaTriggerData d = new JsonUndergroundAreaTriggerData();
+
+    // Position
+    d.Position = new array<float>();
+    d.Position.Insert(pos[0]);
+    d.Position.Insert(pos[1]);
+    d.Position.Insert(pos[2]);
+
+    // Orientation
+    d.Orientation = new array<float>();
+    d.Orientation.Insert(orient[0]);
+    d.Orientation.Insert(orient[1]);
+    d.Orientation.Insert(orient[2]);
+
+    // Size (this class expects Size, not min/max extents)
+    d.Size = new array<float>();
+    d.Size.Insert(size[0]);
+    d.Size.Insert(size[1]);
+    d.Size.Insert(size[2]);
+
+    // Brightness blend controls
+    d.EyeAccommodation = acc;        // 0..1
+    d.InterpolationSpeed = interp;   // 0..1
+
+    // Optional fields – set them if you use them
+    d.UseLinePointFade = false;      // or true if you’ll fill Breadcrumbs
+    d.AmbientSoundType = "";         // e.g., "subway", depends on your use
+
+    // Breadcrumbs (optional path points). Only if you use UseLinePointFade.
+    // d.Breadcrumbs = new array<ref JsonUndergroundAreaBreadcrumb>();
+    // ... fill with points if you want path fading
+
+    return d;
 }

@@ -1,25 +1,64 @@
 modded class UndergroundTrigger
 {
-	void SetExtentsFromSize(vector size)
+	void SetAccommodation(float v)     { m_Accommodation = v; }
+	void SetInterpolationSpeed(float v){ m_InterpolationSpeed = v; }
+    
+    void SetExtentsFromSize(vector size)
 	{
 		vector e = size * 0.5;    // half-size per axis
 		SetExtents(-e, e);
 	}
 
-	void SetAccommodation(float v)     { m_Accommodation = v; }
-	void SetInterpolationSpeed(float v){ m_InterpolationSpeed = v; }
 
-	void SetTypeForAccommodation()
+    //Over ride the existing trigger enter and leave events to call the client handler because the Server Handler was set to only run in dev mode, but we need it.  
+
+	override protected void OnEnterServerEvent(TriggerInsider insider) 
+	{
+		OnEnterClientEvent(insider);
+	}
+	override protected void OnLeaveServerEvent(TriggerInsider insider) 
+	{
+		OnLeaveClientEvent(insider);
+	}
+	
+	override protected void OnEnterClientEvent(TriggerInsider insider) 
+	{
+		PlayerBase player = PlayerBase.Cast(insider.GetObject());
+		if (player)
+		{
+			UndergroundHandlerClient handler = player.GetUndergroundHandler();
+			if (handler)
+			{
+				handler.OnTriggerEnter(this);
+			}
+		}
+	}
+	
+	override protected void OnLeaveClientEvent(TriggerInsider insider) 
+	{
+		PlayerBase player = PlayerBase.Cast(insider.GetObject());
+		if (player)
+		{
+			UndergroundHandlerClient handler = player.GetUndergroundHandler();
+			if (handler)
+			{
+				handler.OnTriggerLeave(this);
+			}
+		}
+	}
+
+    void SetTypeForAccommodation()
     {
     if (m_Accommodation == 1)
         {
             m_Type = EUndergroundTriggerType.OUTER;
         }
-        else
+    else
         {
             m_Type = EUndergroundTriggerType.INNER;
         }
     }
+
 }
 
 modded class EditorObject
