@@ -12,12 +12,11 @@ class UGBreadcrumb : Building
         m_BCWatch = new Timer(CALL_CATEGORY_SYSTEM);
         m_BCWatch.Run(0.10, this, "BC_Poll", null, true);
     }
-    
     void ~UGBreadcrumb()
     {
         if (m_BCWatch) m_BCWatch.Stop();
     }
-
+    
     void BC_Poll()
     {
     vector p = GetPosition();
@@ -41,5 +40,4 @@ class UGBreadcrumb : Building
 
     void SetRadius(float r) { m_UG_Radius = r; }
     float GetRadius() { return m_UG_Radius; }
-
 };

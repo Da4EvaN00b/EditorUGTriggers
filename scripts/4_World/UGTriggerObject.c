@@ -63,7 +63,7 @@ class UGTriggerObject : Building
 	{
 		UndergroundTrigger trig = GetLinkedTrigger();
 		if (trig) return trig.m_Accommodation;
-		return 1.0; 
+		return 1.0; // default
 	}
 
 	void SetInterpolation(float v)
@@ -77,7 +77,7 @@ class UGTriggerObject : Building
 	{
 		UndergroundTrigger trig = GetLinkedTrigger();
 		if (trig) return trig.m_InterpolationSpeed;
-		return 1.0; 
+		return 1.0; // default
 	}
 
 	void UGTriggerObject()
@@ -90,7 +90,6 @@ class UGTriggerObject : Building
 
 		m_LastPosePos = GetPosition();
    		m_LastPoseOri = GetOrientation();
-	
 		m_SyncTimer = new Timer(CALL_CATEGORY_SYSTEM);
 		m_SyncTimer.Run(0.05, this, "UpdateTriggerPoseOnly", null, true);
 	}
@@ -313,6 +312,8 @@ class UGTriggerObject : Building
 		}
 	}
 
+	// ===== Math / transform helpers =====
+
 	void QueueCrumbRescan()
 	{
 	    if (m_RescanQueued) return;
@@ -325,7 +326,7 @@ class UGTriggerObject : Building
 	    m_RescanQueued = false;
 	    if (GetUGType() == 2) { CollectBreadcrumbs(); } // Transitional only
 	}
-	// ===== Math / transform helpers =====
+
 	protected float UG_MapScaleToEyeAcco(float sc)
 	{
 		if (sc < 0.0) sc = 0.0;
@@ -341,7 +342,6 @@ class UGTriggerObject : Building
 		vector P[4];
 		GetTransform(P);
 
-		// Strip scale
 		vector ax0 = P[0].Normalized();
 		vector ax1 = P[1].Normalized();
 		vector ax2 = Math3D.CrossProduct(ax0, ax1); ax2.Normalize();
@@ -354,15 +354,6 @@ class UGTriggerObject : Building
 		M[3] = GetPosition();
 
 		m_UndergroundTrigger.SetTransform(M);
-
-		vector curPos = GetPosition();
-    	vector curOri = GetOrientation();
-    	bool moved = (vector.Distance(curPos, m_LastPosePos) > 0.001) || (Math.AbsFloat(curOri[0] - m_LastPoseOri[0]) > 0.01) || (Math.AbsFloat(curOri[1] - m_LastPoseOri[1]) > 0.01) || (Math.AbsFloat(curOri[2] - m_LastPoseOri[2]) > 0.01);
-    	if (moved) {
-    	    m_LastPosePos = curPos;
-    	    m_LastPoseOri = curOri;
-    	    QueueCrumbRescan();
-		}	
 	}
 
 	protected void UpdateTriggerExtentsOnly()
@@ -396,13 +387,6 @@ class UGTriggerObject : Building
 		SetTransform(T);
 	}
 }
-
-float UG_Round2(float v)
-{
-	v = Math.Clamp(v, 0.0, 1.0);
-	return Math.Round(v * 100.0) / 100.0;
-}
-
 void UG_RescanTriggersAround(vector center, float radius)
 {
     ref array<Object> objs = new array<Object>();
@@ -413,4 +397,10 @@ void UG_RescanTriggersAround(vector center, float radius)
         if (ug.GetUGType() != 2) continue; // only Transitional cares
         ug.QueueCrumbRescan();
     }
+}
+
+float UG_Round2(float v)
+{
+	v = Math.Clamp(v, 0.0, 1.0);
+	return Math.Round(v * 100.0) / 100.0;
 }
