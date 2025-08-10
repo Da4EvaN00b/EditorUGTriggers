@@ -12,32 +12,20 @@ class CfgMods
 {
 	class EditorUGTriggers
 	{
-		dir = "EditorUGTriggers";
 		name = "EditorUGTriggers";
-		credits = "BobbyDale";
-		author = "BobbyDale";
-		authorID = "0";
 		version = "1.0";
-		extra = 0;
-		type = "mod";
+		dir = "EditorUGTriggers";		
+		author = "bauvdel & JinieJ";
+		credits = "InclementDab";
 		inputs = "EditorUGTriggers/Scripts/Data/Inputs.xml";
-		dependencies[] = {"Game","World","Mission"};
+		type = "mod";
+		dependencies[] = {"World"};
 		class defs
 		{
-			class gameScriptModule
-			{
-				value = "";
-				files[] = {"EditorUGTriggers/scripts/3_Game"};
-			};
 			class worldScriptModule
 			{
 				value = "";
 				files[] = {"EditorUGTriggers/scripts/4_World"};
-			};
-			class missionScriptModule
-			{
-				value = "";
-				files[] = {"EditorUGTriggers/scripts/5_Mission"};
 			};
 		};
 	};
