@@ -7,7 +7,7 @@ class UGTriggerObject : Building
 	protected vector m_LastPosePos;
 	protected vector m_LastPoseOri;
 	protected int m_DesiredUGType = -1;
-
+	
 	// ----- Type (0=Outer, 1=Inner, 2=Transitional) -----
 	int GetUGType()
 	{
@@ -383,4 +383,112 @@ float UG_Round2(float v)
 {
 	v = Math.Clamp(v, 0.0, 1.0);
 	return Math.Round(v * 100.0) / 100.0;
+}
+
+//IMPORT to Editor
+class UGTriggerApplyRec
+{
+    vector Pos;
+    vector Size;
+    float  EyeAcc;
+    float  Interp;
+    int    Type;  
+}
+
+class UGBreadcrumbApplyRec
+{
+    vector Pos;
+    float  EyeAcc;
+    int    UseRaycast;
+    float  Radius;
+}
+
+ref array<ref UGTriggerApplyRec>     g_UG_ToApply = new array<ref UGTriggerApplyRec>();
+ref array<ref UGBreadcrumbApplyRec>  g_BC_ToApply = new array<ref UGBreadcrumbApplyRec>();
+
+class UG_PostImportApplier
+{
+    static int s_Attempts = 20;
+
+    static void Start()
+    {
+        s_Attempts = 20;
+        GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(UG_PostImportApplier.Tick, 200, false);
+    }
+
+    static void Tick()
+    {
+        for (int i = g_UG_ToApply.Count() - 1; i >= 0; i--)
+        {
+            UGTriggerApplyRec rec = g_UG_ToApply[i];
+            UGTriggerObject ug = FindNearestUG(rec.Pos, 3.0);
+            if (!ug) continue;
+
+            // Apply in correct order
+            ug.SetUGType(rec.Type);
+            ug.SetSize(rec.Size);
+            ug.SetEyeAccommodation(rec.EyeAcc);
+            ug.SetInterpolation(rec.Interp);
+
+            if (rec.Type == 2) ug.QueueCrumbRescan();
+
+            g_UG_ToApply.Remove(i);
+        }
+
+        for (int j = g_BC_ToApply.Count() - 1; j >= 0; j--)
+        {
+            UGBreadcrumbApplyRec bc = g_BC_ToApply[j];
+            UGBreadcrumb obj = FindNearestBC(bc.Pos, 3.0);
+            if (!obj) continue;
+
+            obj.SetEyeAccommodation(bc.EyeAcc);
+            obj.SetUseRaycast(bc.UseRaycast);
+            obj.SetRadius(bc.Radius);
+
+            g_BC_ToApply.Remove(j);
+        }
+
+        if (g_UG_ToApply.Count() == 0 && g_BC_ToApply.Count() == 0) {
+            return;
+        }
+
+        s_Attempts--;
+        if (s_Attempts > 0) {
+            GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(UG_PostImportApplier.Tick, 200, false);
+        }
+    }
+
+    static UGTriggerObject FindNearestUG(vector pos, float radius)
+    {
+        ref array<Object> objs = new array<Object>();
+        GetGame().GetObjectsAtPosition3D(pos, radius, objs, null);
+
+        float bestD2 = 1e12;
+        UGTriggerObject best;
+        foreach (Object o : objs)
+        {
+            UGTriggerObject ug = UGTriggerObject.Cast(o);
+            if (!ug) continue;
+            float d2 = vector.DistanceSq(ug.GetPosition(), pos);
+            if (d2 < bestD2) { bestD2 = d2; best = ug; }
+        }
+        return best;
+    }
+
+    static UGBreadcrumb FindNearestBC(vector pos, float radius)
+    {
+        ref array<Object> objs = new array<Object>();
+        GetGame().GetObjectsAtPosition3D(pos, radius, objs, null);
+
+        float bestD2 = 1e12;
+        UGBreadcrumb best;
+        foreach (Object o : objs)
+        {
+            UGBreadcrumb bc = UGBreadcrumb.Cast(o);
+            if (!bc) continue;
+            float d2 = vector.DistanceSq(bc.GetPosition(), pos);
+            if (d2 < bestD2) { bestD2 = d2; best = bc; }
+        }
+        return best;
+    }
 }

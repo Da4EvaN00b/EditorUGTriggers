@@ -8,7 +8,7 @@
 [![Workshop](https://img.shields.io/badge/Steam-Workshop-blue.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=NEED_ID)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-black.svg)](https://github.com/bauvdel/EditorUGTriggers)
 
-> Create, test, import, and export fully functional Underground Triggers right inside of DayZ Editor!
+> Create, test, import, and export fully functional Underground Triggers right inside of DayZ Editor for both Console and PC!
 
 ---
 
@@ -21,7 +21,12 @@
 
 ### ▶️ Tutorial Video
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/fJmMbl3bqE0?si=cRlSOCT7IMT86onG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<a href="https://youtu.be/fJmMbl3bqE0" target="_blank">
+  <img src="https://img.youtube.com/vi/fJmMbl3bqE0/maxresdefault.jpg" width="400"/>
+</a>
+
+### <a href="https://youtu.be/fJmMbl3bqE0" target="_blank">Watch on YouTube</a>
+
 
 ---
 
@@ -32,7 +37,8 @@
 - Condigure your trigger areas with **Trigger Type**, **Eye Accommodation**, and **Interpolation Speed**.
 - Configure youre breadcrumbs with **Eye Accommodation**, **Raycast**, and **Radius**.
 - Breadcrumbs automatically attach to **Transitional Triggers**.
-- Full **.json export/import** workflow for mission integration.
+- Export and import your **cfgundergroundtriggers.json**.
+- Works for both **PC** and **Console**!
 
 ---
 
@@ -87,12 +93,12 @@ Read the **Bohemia Wiki Page:** [Underground Areas Configuration](https://commun
 
 | Action            | Keybind  |
 |-------------------|----------|
-| Decrease Length   | Numpad 7 |
-| Increase Length   | Numpad 9 |
-| Decrease Width    | Numpad 4 |
-| Increase Width    | Numpad 6 |
-| Decrease Height   | Numpad 1 |
-| Increase Height   | Numpad 3 |
+| Decrease Length   | Numpad <kbd>7</kbd> |
+| Increase Length   | Numpad <kbd>9</kbd> |
+| Decrease Width    | Numpad <kbd>4</kbd> |
+| Increase Width    | Numpad <kbd>6</kbd> |
+| Decrease Height   | Numpad <kbd>1</kbd> |
+| Increase Height   | Numpad <kbd>3</kbd> |
 
 
 - **Size** can also be adjusted in the UGTriggerObject Properties Window.

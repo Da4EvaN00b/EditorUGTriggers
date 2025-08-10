@@ -8,10 +8,10 @@ modded class Editor
         UAInputAPI input_api = GetUApi();
 
         if (!input_api) return;
-        if (input_api.GetInputByName("UGTRIG_Export").LocalPress())
-        {
-            ExportUGTriggersToJSONF9();
-        }
+   //   if (input_api.GetInputByName("UGTRIG_Export").LocalPress())
+   //   {
+   //       ExportUGTriggersToJSONF9();
+   //   }
 
         foreach (int id, EditorObjectData obj_data : m_SessionCache)
         {
@@ -31,7 +31,7 @@ modded class Editor
             if (input_api.GetInputByName("UGTRIG_DecHeight").LocalPress())  triggerobj.TrigSize(0, -UG_STEP, 0);
 
             //Keeping for debugging
-            if (input_api.GetInputByName("UGTRIG_AddBreadcrumbs").LocalPress())  UG_AddBreadCrumbs({triggerobj});
+            //if (input_api.GetInputByName("UGTRIG_AddBreadcrumbs").LocalPress())  UG_AddBreadCrumbs({triggerobj});
 
         }
         UG_ReapplyScaleForSelection();
@@ -66,15 +66,15 @@ modded class Editor
         }
     }
 
-    static void UG_AddBreadCrumbs(array<UGTriggerObject> ugs)
-    {
-        Print("[UGTriggerObject] UG_AddBreadCrumbs called for " + ugs.Count() + " UGTriggerObjects");
-        if (ugs.Count() == 0) return;
-        if (!GetGame().IsServer()) return;
-        foreach (UGTriggerObject ug : ugs) {
-            ug.GetBreadcrumbs(); 
-        }
-    }
+//  static void UG_AddBreadCrumbs(array<UGTriggerObject> ugs)
+//  {
+//      Print("[UGTriggerObject] UG_AddBreadCrumbs called for " + ugs.Count() + " UGTriggerObjects");
+//      if (ugs.Count() == 0) return;
+//      if (!GetGame().IsServer()) return;
+//      foreach (UGTriggerObject ug : ugs) {
+//          ug.GetBreadcrumbs(); 
+//      }
+//  }
     
     void ExportUGTriggersToJSONF9()
     {

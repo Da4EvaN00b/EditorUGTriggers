@@ -165,6 +165,7 @@ modded class EditorCommandManager
 	override void Init()
 	{
         RegisterCommand(ExportUGTriggersToJSON);
+        RegisterCommand(EditorImportFromUG);
         super.Init();    
     }
 }
@@ -178,12 +179,25 @@ class ExportUGTriggersToJSON: EditorExportCommandBase
 	
 	override string GetName() 
 	{
-		return "Export UGTriggers (*.json)";
+		return "Export to .cfgundergroundtriggers (*.json)";
+	}
+}
+class EditorImportFromUG: EditorImportCommandBase
+{
+	override typename GetFileType() 
+	{
+		return EditorUGTriggerFile;
+	}
+	
+	override string GetName() 
+	{
+		return "Import from .cfgundergroundtriggers (*.json)";
 	}
 }
 
 class EditorUGTriggerFile : EditorFileType
 {
+    //Export UGTriggers to JSON
     override void Export(EditorSaveData data, string file, ExportSettings settings, eDialogExtraSetting dialog_setting)
     {
         UGTriggersExportRoot root = new UGTriggersExportRoot();
@@ -225,6 +239,73 @@ class EditorUGTriggerFile : EditorFileType
 
         JsonFileLoader<UGTriggersExportRoot>.JsonSaveFile(file, root);
     }
+    //Import UGTriggers from JSON
+    override EditorSaveData Import(string file, ImportSettings settings)
+    {
+        EditorSaveData save_data = new EditorSaveData();
+        UGTriggersExportRoot import_data = new UGTriggersExportRoot();
+        JsonFileLoader<UGTriggersExportRoot>.JsonLoadFile(file, import_data);
+
+        if (!import_data || !import_data.Triggers || import_data.Triggers.Count() == 0) {
+            return save_data;
+        }
+
+        foreach (UGTriggersExport t : import_data.Triggers)
+        {
+            vector pos    = Vector(t.Position[0], t.Position[1], t.Position[2]);
+            vector orient = Vector(t.Orientation[0], t.Orientation[1], t.Orientation[2]);
+            vector size   = Vector(t.Size[0], t.Size[1], t.Size[2]);
+            float acc = t.EyeAccommodation;
+            acc = UG_Round2(Math.Clamp(acc, 0.0, 1.0));
+            float interp = t.InterpolationSpeed;
+            interp = UG_Round2(Math.Clamp(interp, 0.0, 1.0));
+
+            // Hacky way to determine Trigger type on import - looking for better ideas.
+            int ugType = 0;
+            if (t.Breadcrumbs && t.Breadcrumbs.Count() >= 2) {
+                ugType = 2;
+            } else if (acc <= 0.01) {
+                ugType = 1;
+            } else {
+                ugType = 0;
+            }
+
+            UGTriggerApplyRec arec = new UGTriggerApplyRec();
+            arec.Pos    = pos;
+            arec.Size   = size;
+            arec.EyeAcc = acc;
+            arec.Interp = interp;
+            arec.Type   = ugType;
+            g_UG_ToApply.Insert(arec);
+
+            EditorObjectData dta = EditorObjectData.Create("UGTriggerObject", pos, orient, 1.0, EFE_DEFAULT);
+            save_data.EditorObjects.Insert(dta);
+
+            if (t.Breadcrumbs)
+            {
+                foreach (UGBreadcrumbExport be : t.Breadcrumbs)
+                {
+                    vector bpos    = Vector(be.Position[0], be.Position[1], be.Position[2]);
+                    vector borient = Vector(0, 0, 0);
+
+                    UGBreadcrumbApplyRec bcrec = new UGBreadcrumbApplyRec();
+                    float bAcc = UG_Round2(Math.Clamp(be.EyeAccommodation, 0.0, 1.0));
+                    bcrec.Pos        = bpos;
+                    bcrec.EyeAcc     = bAcc;
+                    bcrec.UseRaycast = be.UseRaycast;
+                    bcrec.Radius     = be.Radius;
+                    g_BC_ToApply.Insert(bcrec);
+
+                    EditorObjectData bcDta = EditorObjectData.Create("UGBreadcrumb", bpos, borient, 1.0, EFE_DEFAULT);
+                    save_data.EditorObjects.Insert(bcDta);
+                }
+            }
+        }
+        
+        UG_PostImportApplier.Start();
+
+        return save_data;
+    }
 
     override string GetExtension()
 	{
@@ -243,5 +324,12 @@ modded class EditorExportMenu
     void EditorExportMenu()
     {
         AddMenuButton(m_Editor.CommandManager[ExportUGTriggersToJSON]);
+    }
+}
+modded class EditorImportMenu
+{
+    void EditorImportMenu()
+    {
+        AddMenuButton(m_Editor.CommandManager[EditorImportFromUG]);
     }
 }
