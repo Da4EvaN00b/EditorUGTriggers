@@ -82,60 +82,77 @@ modded class Editor
             ug.GetBreadcrumbs(); 
         }
     }
-
+    
     void ExportUGTriggersToJSON()
     {
+        Print("[UGTriggers] Begin Export");
 
-		Print("[UGTriggers] Begin Export");
+        ref UGTriggersExportRoot exportData = new UGTriggersExportRoot();
 
-		ref UGTriggersExportRoot exportData = new UGTriggersExportRoot();
+        foreach (int id, EditorObjectData obj_data : m_SessionCache)
+        {
+            UGTriggerObject triggerobj = UGTriggerObject.Cast(obj_data.WorldObject);
+            if (!triggerobj)
+                continue;
 
-		foreach (int id, EditorObjectData obj_data : m_SessionCache)
-		{
-			UGTriggerObject triggerobj = UGTriggerObject.Cast(obj_data.WorldObject);
-			if (!triggerobj)
-				continue;
+            vector pos    = obj_data.Position;
+            vector orient = obj_data.Orientation;
+            vector size   = triggerobj.GetSize();
 
-			vector pos    = obj_data.Position;
-			vector orient = obj_data.Orientation;
-			vector size   = triggerobj.GetSize();
+            float acc    = Math.Clamp(triggerobj.GetEyeAccommodation(), 0.0, 1.0);
+            float interp = Math.Clamp(triggerobj.GetInterpolation(),    0.0, 1.0);
+            
+            UndergroundTrigger trig = triggerobj.GetLinkedTrigger();
 
-			// Read current trigger values (floats)
-			float acc    = 1.0;
-			float interp = 1.0;
+            // Build export row
+            UGTriggersExport ex = new UGTriggersExport(pos, orient, size, acc, interp);
 
-			UndergroundTrigger trig = triggerobj.GetLinkedTrigger();
-			if (trig)
-			{
-				acc    = Math.Clamp(trig.m_Accommodation, 0.0, 1.0);
-				interp = Math.Clamp(trig.m_InterpolationSpeed, 0.0, 1.0);
-			}
+            // Breadcrumbs ONLY for Transitional and when there are at least 2
+            if (triggerobj.GetUGType() == 2 && trig && trig.m_Data && trig.m_Data.Breadcrumbs && trig.m_Data.Breadcrumbs.Count() >= 2)
+            {
+                ex.Breadcrumbs = new array<ref UGBreadcrumbExport>();
+                foreach (JsonUndergroundAreaBreadcrumb b : trig.m_Data.Breadcrumbs)
+                {
+                    UGBreadcrumbExport eb = new UGBreadcrumbExport();
+                    eb.Position = new array<float>();
+                    eb.Position.Insert(b.Position.Get(0));
+                    eb.Position.Insert(b.Position.Get(1));
+                    eb.Position.Insert(b.Position.Get(2));
 
-			exportData.Triggers.Insert(new UGTriggersExport(pos, orient, size, acc, interp));
-		}
+                    eb.EyeAccommodation = b.EyeAccommodation;
+                    eb.UseRaycast       = b.UseRaycast;
+                    eb.Radius           = b.Radius;
+                    ex.Breadcrumbs.Insert(eb);
+                }
+            }
 
-		int year, month, day, hour, minute, second;
-		GetHourMinuteSecondUTC(hour, minute, second);
-		GetYearMonthDayUTC(year, month, day);
+            // IMPORTANT: insert INSIDE the loop
+            exportData.Triggers.Insert(ex);
+        }
 
-		string timestamp = string.Format("_%1-%2-%3_%4-%5-%6", year, month, day, hour, minute, second);
-		string path = "$saves:Editor\\TriggerExport" + timestamp + ".json";
+        int year, month, day, hour, minute, second;
+        GetHourMinuteSecondUTC(hour, minute, second);
+        GetYearMonthDayUTC(year, month, day);
 
-		JsonFileLoader<UGTriggersExportRoot>.JsonSaveFile(path, exportData);
-		Print("[UGTriggers] Exported " + exportData.Triggers.Count() + " triggers to: " + path);
-	}
+        string timestamp = string.Format("_%1-%2-%3_%4-%5-%6", year, month, day, hour, minute, second);
+        string path = "$saves:Editor\\TriggerExport" + timestamp + ".json";
+
+        JsonFileLoader<UGTriggersExportRoot>.JsonSaveFile(path, exportData);
+        Print("[UGTriggers] Exported " + exportData.Triggers.Count() + " triggers to: " + path);
+    }
 }
 
 // JSON payload classes
 class UGTriggersExport
 {
-	ref array<float> Position;
-	ref array<float> Orientation;
-	ref array<float> Size;
+	ref array<float> Position;        // [x,y,z]
+	ref array<float> Orientation;     // [yaw,pitch,roll]
+	ref array<float> Size;            // [x,y,z]
+	float            EyeAccommodation;
+	float            InterpolationSpeed;
+	ref array<ref UGBreadcrumbExport> Breadcrumbs;  // set only for Transitional
 
-	float EyeAccommodation;            // 0..1
-	ref array<ref string> Breadcrumbs = {};
-	float InterpolationSpeed;          // 0..1
+
 
 	void UGTriggersExport(vector pos, vector orient, vector size, float acc, float interp)
 	{
@@ -144,18 +161,30 @@ class UGTriggersExport
 		if (size[1] < 1) size[1] = 1;
 		if (size[2] < 1) size[2] = 1;
 
-		Position    = { pos[0], pos[1], pos[2] };
-		Orientation = { orient[0], orient[1], orient[2] };
-		Size        = { size[0], size[1], size[2] };
+		Position = new array<float>();
+		Position.Insert(pos[0]);    Position.Insert(pos[1]);    Position.Insert(pos[2]);
 
-		EyeAccommodation  = Math.Clamp(acc, 0.0, 1.0);
+		Orientation = new array<float>();
+		Orientation.Insert(orient[0]); Orientation.Insert(orient[1]); Orientation.Insert(orient[2]);
+
+		Size = new array<float>();
+		Size.Insert(size[0]); Size.Insert(size[1]); Size.Insert(size[2]);
+
+		EyeAccommodation   = Math.Clamp(acc, 0.0, 1.0);
 		InterpolationSpeed = Math.Clamp(interp, 0.0, 1.0);
 	}
 }
 
+class UGBreadcrumbExport
+{
+	ref array<float> Position;  
+	float EyeAccommodation;      
+	int   UseRaycast;            
+	float Radius;                
+}
 class UGTriggersExportRoot
 {
-	ref array<ref UGTriggersExport> Triggers = new array<ref UGTriggersExport>();
+    ref array<ref UGTriggersExport> Triggers = new array<ref UGTriggersExport>();
 }
 
 static JsonUndergroundAreaTriggerData BuildJsonFromUG(UGTriggerObject ug)
@@ -173,8 +202,6 @@ static JsonUndergroundAreaTriggerData BuildJsonFromUG(UGTriggerObject ug)
     if (t) {
         acc    = t.m_Accommodation;
         interp = t.m_InterpolationSpeed;
-        // keep type consistent if you use it
-        t.SetTypeForAccommodation();
     }
 
     JsonUndergroundAreaTriggerData d = new JsonUndergroundAreaTriggerData();
@@ -198,16 +225,8 @@ static JsonUndergroundAreaTriggerData BuildJsonFromUG(UGTriggerObject ug)
     d.Size.Insert(size[2]);
 
     // Brightness blend controls
-    d.EyeAccommodation = acc;        // 0..1
-    d.InterpolationSpeed = interp;   // 0..1
-
-    // Optional fields – set them if you use them
-    d.UseLinePointFade = false;      // or true if you’ll fill Breadcrumbs
-    d.AmbientSoundType = "";         // e.g., "subway", depends on your use
-
-    // Breadcrumbs (optional path points). Only if you use UseLinePointFade.
-    // d.Breadcrumbs = new array<ref JsonUndergroundAreaBreadcrumb>();
-    // ... fill with points if you want path fading
+    d.EyeAccommodation = acc;        
+    d.InterpolationSpeed = interp;   
 
     return d;
 }

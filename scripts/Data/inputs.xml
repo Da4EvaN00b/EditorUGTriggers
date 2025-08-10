@@ -9,6 +9,7 @@
             <input name="UGTRIG_DecWidth"  loc="Decrease Trigger Width" />
             <input name="UGTRIG_IncHeight" loc="Increase Trigger Height" />
             <input name="UGTRIG_DecHeight" loc="Decrease Trigger Height" />
+            <input name="UGTRIG_AddBreadcrumbs" loc="Add Breadcrumbs" />
         </actions>
     </inputs>
 
@@ -36,6 +37,9 @@
         </input>
         <input name="UGTRIG_DecHeight">
             <btn name="kNUMPAD1"/>
+        </input>
+        <input name="UGTRIG_AddBreadcrumbs">
+            <btn name="kNUMPAD5"/>
         </input>
     </preset>
 </modded_inputs>

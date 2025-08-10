@@ -4,6 +4,79 @@ class UGTriggerObject : Building
 	protected UndergroundTrigger m_UndergroundTrigger;
 	protected ref Timer m_SyncTimer;
 
+	// Remember what the user picked in the dialog (0=Outer,1=Inner,2=Transitional)
+	// -1 means "follow live trigger"
+	protected int m_DesiredUGType = -1;
+
+	// ----- Type (0=Outer, 1=Inner, 2=Transitional) -----
+	int GetUGType()
+	{
+		// Show the user's intended type if set
+		if (m_DesiredUGType >= 0) return m_DesiredUGType;
+
+		UndergroundTrigger trig = GetLinkedTrigger();
+		if (trig) return trig.m_Type; // base-game field
+		return 0; // default Outer
+	}
+
+	void SetUGType(int type)
+	{
+		type = Math.Clamp(type, 0, 2);
+		m_DesiredUGType = type; // remember the user's intent
+
+		UndergroundTrigger trig = GetLinkedTrigger();
+		if (!trig) return;
+
+		// Apply default EyeAccommodation (still editable later)
+		if (type == 0)       SetEyeAccommodation(1.0); // Outer
+		else /* 1 or 2 */    SetEyeAccommodation(0.0); // Inner/Transitional
+
+		// Only Transitional supports breadcrumbs — clear when leaving Transitional
+		if (type != 2 && trig.m_Data)
+		{
+			trig.m_Data.Breadcrumbs = null;
+		}
+
+		// **Push live type immediately (Outer / Inner / Transitional)**
+		trig.m_Type = type;
+	}
+
+	// ----- EyeAccommodation / Interpolation read/write directly to trigger -----
+	void SetEyeAccommodation(float v)
+	{
+		v = UG_Round2(v);
+		UndergroundTrigger trig = GetLinkedTrigger();
+		if (trig)
+		{
+			trig.m_Accommodation = v;
+	
+			// If the user picked Transitional, keep it Transitional even if acc == 0
+			if (m_DesiredUGType == 2)
+				trig.m_Type = EUndergroundTriggerType.TRANSITIONING;
+		}
+	}
+
+	float GetEyeAccommodation()
+	{
+		UndergroundTrigger trig = GetLinkedTrigger();
+		if (trig) return trig.m_Accommodation;
+		return 1.0; // default
+	}
+
+	void SetInterpolation(float v)
+	{
+		v = Math.Clamp(v, 0.0, 1.0);
+		UndergroundTrigger trig = GetLinkedTrigger();
+		if (trig) { trig.m_InterpolationSpeed = v; }
+	}
+
+	float GetInterpolation()
+	{
+		UndergroundTrigger trig = GetLinkedTrigger();
+		if (trig) return trig.m_InterpolationSpeed;
+		return 1.0; // default
+	}
+
 	void UGTriggerObject()
 	{
 		m_Size = Vector(1,1,1);
@@ -24,11 +97,15 @@ class UGTriggerObject : Building
 			m_UndergroundTrigger.Delete();
 	}
 
-	void SetSize(vector s)
+	void SetSize(vector sizeMeters)
 	{
+		vector s = sizeMeters;
+		if (s[0] <= 0.001) s[0] = 0.001;
+		if (s[1] <= 0.001) s[1] = 0.001;
+		if (s[2] <= 0.001) s[2] = 0.001;
 		m_Size = s;
 		ApplySizeTransform();
-		UpdateTrigger(); // pose + extents
+		UpdateTrigger();
 	}
 
 	void TrigSize(float dx, float dy, float dz)
@@ -62,55 +139,86 @@ class UGTriggerObject : Building
 			return;
 		}
 
-		m_UndergroundTrigger.m_Accommodation      = 1; // OUTER
-		m_UndergroundTrigger.m_InterpolationSpeed = 1;
+		// Defaults: Outer
+		m_UndergroundTrigger.m_Accommodation      = 1.0; // Outer default
+		m_UndergroundTrigger.m_InterpolationSpeed = 1.0;
 		m_UndergroundTrigger.m_Type               = EUndergroundTriggerType.OUTER;
+
+		// initial desired type follows the live trigger until user changes it
+		m_DesiredUGType = -1;
 
 		m_UndergroundTrigger.SetPosition(GetPosition());
 		m_UndergroundTrigger.SetOrientation(GetOrientation());
 	}
 
+	// ===== Breadcrumb collection (Transitional-only) =====
+	protected bool IsPointInsideOBB(vector p, out vector right, out vector up, out vector fwd, out vector pos, out vector half)
+	{
+		vector T[4];
+		GetTransform(T);
+		right = T[0].Normalized();
+		up    = T[1].Normalized();
+		fwd   = T[2].Normalized();
+		pos   = T[3];
+		half  = m_Size * 0.5;
+
+		vector d = p - pos;
+		float lx = d * right;
+		float ly = d * up;
+		float lz = d * fwd;
+
+		return (Math.AbsFloat(lx) <= half[0] + 1e-3 && Math.AbsFloat(ly) <= half[1] + 1e-3 && Math.AbsFloat(lz) <= half[2] + 1e-3);
+	}
+
 	void GetBreadcrumbs()
 	{
-		Print("[UG] GetBreadcrumbs: building and attaching breadcrumbs for " + this);
+		Print("[UG] GetBreadcrumbs (OBB/Transitional-only): " + this);
 
 		UndergroundTrigger t = GetLinkedTrigger();
-
 		if (!t) { CreateTriggerIfMissing(); t = GetLinkedTrigger(); if (!t) { Print("[UG][ERR] no trigger; abort"); return; } }
 
-		array<Object> results = new array<Object>();
-		vector center = GetPosition();
+		// Only Transitional collects crumbs; otherwise clear and exit
+		if (GetUGType() != 2)
+		{
+			if (t.m_Data) { t.m_Data.Breadcrumbs = null; }
+			Print("[UG] Not Transitional; cleared crumbs");
+			return;
+		}
 
-		//Get all breadcrumbs within 150m of the trigger, we need to change this to actually only get the ones within the trigger bounds.
-
-		GetGame().GetObjectsAtPosition(center, 150.0, results, null);
+		// Gather candidate objects within a bounding sphere
+		ref array<Object> results = new array<Object>();
+		float r = Math.Max(Math.Max(m_Size[0], m_Size[1]), m_Size[2]) * 1.5;
+		GetGame().GetObjectsAtPosition3D(GetPosition(), r, results, null);
 
 		ref array<ref JsonUndergroundAreaBreadcrumb> crumbs = new array<ref JsonUndergroundAreaBreadcrumb>();
+
+		vector right, up, fwd, pos, half;
 		foreach (Object obj : results)
 		{
 			if (!obj) continue;
-			//Eventually we will want to filter this to only include our UG breadcrumb object type.
-			if (obj.GetType() != "StaticObj_Misc_SewerCover") continue;
+			if (obj.GetType() != "UGBreadcrumb") continue;
 
-			vector pos = obj.GetPosition();
-			float sc = obj.GetScale();
+			vector wp = obj.GetPosition();
+			if (!IsPointInsideOBB(wp, right, up, fwd, pos, half)) continue;
 
+			UGBreadcrumb crumb = UGBreadcrumb.Cast(obj);
 			JsonUndergroundAreaBreadcrumb bc = new JsonUndergroundAreaBreadcrumb();
 			bc.Position = new array<float>();
-			bc.Position.Insert(pos[0]); bc.Position.Insert(pos[1]); bc.Position.Insert(pos[2]);
+			bc.Position.Insert(wp[0]); bc.Position.Insert(wp[1]); bc.Position.Insert(wp[2]);
+			if (crumb) {
+				bc.EyeAccommodation = crumb.GetEyeAccommodation();
+				bc.UseRaycast = crumb.GetUseRaycast();
+				bc.Radius    = crumb.GetRadius();
 
-			float acc = UG_MapScaleToEyeAcco(sc); 
-			bc.EyeAccommodation = acc;
-			//These will be determined in the properties dialog later
-			bc.UseRaycast = false;
-			bc.Radius    = -1.0;
-			bc.LightLerp = false;
+			} else {
+				bc.EyeAccommodation = 1.0;
+				bc.UseRaycast = 0;
+				bc.Radius    = -1.0;
 
-			Print("[UG] crumb pos=" + pos + " scale=" + sc + " -> acc=" + acc);
+			}
+
 			crumbs.Insert(bc);
 		}
-
-		Print("[UG] GetBreadcrumbs: sewer covers found=" + crumbs.Count());
 
 		if (!t.m_Data)
 		{
@@ -121,32 +229,91 @@ class UGTriggerObject : Building
 
 		if (crumbs.Count() >= 2)
 		{
-			t.m_Data.Breadcrumbs      = crumbs;
-			t.m_Data.UseLinePointFade = false; 
-			t.m_Type = EUndergroundTriggerType.TRANSITIONING;
-			Print("[UG] attached " + crumbs.Count() + " breadcrumbs; type=TRANSITIONING");
+			t.m_Data.Breadcrumbs = crumbs;
+
+			// If the user wanted Transitional, now we can set live type safely
+			if (m_DesiredUGType == 2)
+				t.m_Type = EUndergroundTriggerType.TRANSITIONING;
+
+			Print("[UG] attached " + crumbs.Count() + " breadcrumbs; live type set if desired Transitional");
 		}
 		else
 		{
 			t.m_Data.Breadcrumbs = null;
-			t.m_Data.UseLinePointFade = false;
-			t.SetTypeForAccommodation(); 
 			Print("[UG][WARN] need >=2 breadcrumbs; cleared breadcrumb mode");
 		}
-
 	}
 
+	// Newer entry point (also OBB/Transitional-only). Kept for completeness.
+	void CollectBreadcrumbs()
+	{
+		UndergroundTrigger t = GetLinkedTrigger();
+		if (!t) return;
 
+		// Transitional only
+		if (GetUGType() != 2)
+		{
+			if (t.m_Data) { t.m_Data.Breadcrumbs = null; }
+			return;
+		}
+
+		ref array<Object> objs = new array<Object>();
+		float r = Math.Max(Math.Max(m_Size[0], m_Size[1]), m_Size[2]) * 1.5;
+		GetGame().GetObjectsAtPosition3D(GetPosition(), r, objs, null);
+
+		ref array<ref JsonUndergroundAreaBreadcrumb> crumbs = new array<ref JsonUndergroundAreaBreadcrumb>();
+		vector right, up, fwd, pos, half;
+
+		for (int i = 0; i < objs.Count(); i++)
+		{
+			Object o = objs[i];
+			if (!o) continue;
+			if (o.GetType() != "UGBreadcrumb") continue;
+
+			vector p = o.GetPosition();
+			if (!IsPointInsideOBB(p, right, up, fwd, pos, half)) continue;
+
+			UGBreadcrumb crumb = UGBreadcrumb.Cast(o);
+			JsonUndergroundAreaBreadcrumb bc = new JsonUndergroundAreaBreadcrumb();
+			bc.Position = new array<float>();
+			bc.Position.Insert(p[0]); bc.Position.Insert(p[1]); bc.Position.Insert(p[2]);
+			if (crumb) {
+				bc.EyeAccommodation = crumb.GetEyeAccommodation();
+				bc.UseRaycast = crumb.GetUseRaycast();
+				bc.Radius    = crumb.GetRadius();
+			} else {
+				bc.EyeAccommodation = 1.0;
+				bc.UseRaycast = 0;
+				bc.Radius    = -1.0;
+			}
+
+			crumbs.Insert(bc);
+		}
+
+		if (!t.m_Data) t.m_Data = new JsonUndergroundAreaTriggerData();
+
+		if (crumbs.Count() >= 2)
+		{
+			t.m_Data.Breadcrumbs = crumbs;
+
+			// If the user wanted Transitional, set live type now
+			if (m_DesiredUGType == 2)
+				t.m_Type = EUndergroundTriggerType.TRANSITIONING;
+		}
+		else
+		{
+			t.m_Data.Breadcrumbs = null;
+		}
+	}
+
+	// ===== Math / transform helpers =====
 	protected float UG_MapScaleToEyeAcco(float sc)
 	{
 		if (sc < 0.0) sc = 0.0;
 		if (sc > 1.0) sc = 1.0;
-
 		sc = Math.Round(sc * 100.0) / 100.0;
-
 		return sc;
 	}
-
 
 	protected void UpdateTriggerPoseOnly()
 	{
@@ -202,4 +369,10 @@ class UGTriggerObject : Building
 
 		SetTransform(T);
 	}
+}
+
+float UG_Round2(float v)
+{
+	v = Math.Clamp(v, 0.0, 1.0);
+	return Math.Round(v * 100.0) / 100.0;
 }
