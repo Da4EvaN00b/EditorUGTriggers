@@ -1,8 +1,8 @@
 class UGBreadcrumb : Building
 {
-    protected float m_UG_EyeAccommodation = 1.0; // 0..1
-    protected int   m_UG_UseRaycast = 1;         // 0/1
-    protected float m_UG_Radius = -1.0;          // -1 = default
+    protected float m_UG_EyeAccommodation = 1.0; 
+    protected int   m_UG_UseRaycast = 1;        
+    protected float m_UG_Radius = -1.0;         
     protected ref Timer m_BCWatch;
     protected vector    m_LastPos;
 
@@ -23,7 +23,7 @@ class UGBreadcrumb : Building
     if (vector.Distance(p, m_LastPos) > 0.001) 
         {
         m_LastPos = p;
-        UG_RescanTriggersAround(p, 200.0); // reasonable radius; adjust if needed
+        UG_RescanTriggersAround(p, 200.0);
         }
     }
 
@@ -31,7 +31,7 @@ class UGBreadcrumb : Building
     {
         if (v < 0.0) v = 0.0;
         if (v > 1.0) v = 1.0;
-        m_UG_EyeAccommodation = v;
+        m_UG_EyeAccommodation = UG_Round2(v);
         UG_RescanTriggersAround(GetPosition(), 200.0);
     }
     float GetEyeAccommodation() { return m_UG_EyeAccommodation; }

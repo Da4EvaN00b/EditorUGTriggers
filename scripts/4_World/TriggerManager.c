@@ -5,14 +5,12 @@ modded class Editor
     override void ProcessInput(float dt, Input input)
     {
         super.ProcessInput(dt, input);
-
-        // --- Your UGTRIG custom keybinds ---
         UAInputAPI input_api = GetUApi();
-        if (!input_api) return;
 
+        if (!input_api) return;
         if (input_api.GetInputByName("UGTRIG_Export").LocalPress())
         {
-            ExportUGTriggersToJSON();
+            ExportUGTriggersToJSONF9();
         }
 
         foreach (int id, EditorObjectData obj_data : m_SessionCache)
@@ -32,18 +30,15 @@ modded class Editor
             if (input_api.GetInputByName("UGTRIG_IncHeight").LocalPress())  triggerobj.TrigSize(0, UG_STEP, 0);
             if (input_api.GetInputByName("UGTRIG_DecHeight").LocalPress())  triggerobj.TrigSize(0, -UG_STEP, 0);
 
-            //Just for testing, Press Num Pad 5 to add breadcrumbs. Should be worked into the update loop later. 
+            //Keeping for debugging
             if (input_api.GetInputByName("UGTRIG_AddBreadcrumbs").LocalPress())  UG_AddBreadCrumbs({triggerobj});
 
         }
-
-        // --- Post-process fix so keyboard/mouse move keeps UGTriggerObject scale ---
         UG_ReapplyScaleForSelection();
     }
 
     void UG_ReapplyScaleForSelection()
     {
-      //  Print("[UGTriggerObject] Reapplying scale for selection...");
         EditorObjectMap selected = GetSelectedObjects();
         if (!selected || selected.Count() == 0) return;
 
@@ -53,7 +48,6 @@ modded class Editor
             UGTriggerObject ug = UGTriggerObject.Cast(w);
             if (!ug) continue;
 
-            // Read the transform just set by the editor
             vector m[4];
             w.GetTransform(m);
 
@@ -77,13 +71,12 @@ modded class Editor
         Print("[UGTriggerObject] UG_AddBreadCrumbs called for " + ugs.Count() + " UGTriggerObjects");
         if (ugs.Count() == 0) return;
         if (!GetGame().IsServer()) return;
-
         foreach (UGTriggerObject ug : ugs) {
             ug.GetBreadcrumbs(); 
         }
     }
     
-    void ExportUGTriggersToJSON()
+    void ExportUGTriggersToJSONF9()
     {
         Print("[UGTriggers] Begin Export");
 
@@ -98,16 +91,12 @@ modded class Editor
             vector pos    = obj_data.Position;
             vector orient = obj_data.Orientation;
             vector size   = triggerobj.GetSize();
-
-            float acc    = Math.Clamp(triggerobj.GetEyeAccommodation(), 0.0, 1.0);
-            float interp = Math.Clamp(triggerobj.GetInterpolation(),    0.0, 1.0);
+            float acc    = UG_Round2(triggerobj.GetEyeAccommodation());
+            float interp = UG_Round2(triggerobj.GetInterpolation());
             
             UndergroundTrigger trig = triggerobj.GetLinkedTrigger();
-
-            // Build export row
             UGTriggersExport ex = new UGTriggersExport(pos, orient, size, acc, interp);
 
-            // Breadcrumbs ONLY for Transitional and when there are at least 2
             if (triggerobj.GetUGType() == 2 && trig && trig.m_Data && trig.m_Data.Breadcrumbs && trig.m_Data.Breadcrumbs.Count() >= 2)
             {
                 ex.Breadcrumbs = new array<ref UGBreadcrumbExport>();
@@ -119,14 +108,13 @@ modded class Editor
                     eb.Position.Insert(b.Position.Get(1));
                     eb.Position.Insert(b.Position.Get(2));
 
-                    eb.EyeAccommodation = b.EyeAccommodation;
+                    eb.EyeAccommodation = UG_Round2(b.EyeAccommodation);
                     eb.UseRaycast       = b.UseRaycast;
                     eb.Radius           = b.Radius;
                     ex.Breadcrumbs.Insert(eb);
                 }
             }
 
-            // IMPORTANT: insert INSIDE the loop
             exportData.Triggers.Insert(ex);
         }
 
@@ -142,21 +130,18 @@ modded class Editor
     }
 }
 
-// JSON payload classes
+
 class UGTriggersExport
 {
-	ref array<float> Position;        // [x,y,z]
-	ref array<float> Orientation;     // [yaw,pitch,roll]
-	ref array<float> Size;            // [x,y,z]
+	ref array<float> Position;
+	ref array<float> Orientation;
+	ref array<float> Size;
 	float            EyeAccommodation;
 	float            InterpolationSpeed;
-	ref array<ref UGBreadcrumbExport> Breadcrumbs;  // set only for Transitional
-
-
+	ref array<ref UGBreadcrumbExport> Breadcrumbs;
 
 	void UGTriggersExport(vector pos, vector orient, vector size, float acc, float interp)
 	{
-		// Enforce min size rule to match editor UI
 		if (size[0] < 1) size[0] = 1;
 		if (size[1] < 1) size[1] = 1;
 		if (size[2] < 1) size[2] = 1;
@@ -224,7 +209,7 @@ static JsonUndergroundAreaTriggerData BuildJsonFromUG(UGTriggerObject ug)
     d.Size.Insert(size[1]);
     d.Size.Insert(size[2]);
 
-    // Brightness blend controls
+    //Darkness
     d.EyeAccommodation = acc;        
     d.InterpolationSpeed = interp;   
 

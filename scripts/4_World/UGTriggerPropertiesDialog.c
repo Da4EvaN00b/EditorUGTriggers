@@ -1,30 +1,25 @@
 modded class EditorObjectPropertiesDialog : EditorDialogBase
 {
-	// === UG fields bound to the UI ===
 	vector UG_SizeVec;
-	float  UG_EyeAccommodation = 1.0; // [0..1]
-	float  UG_Interpolation    = 1.0; // [0..1]
-	int    UG_Type             = 0;   // 0=Outer, 1=Inner, 2=Transitional
+	float  UG_EyeAccommodation = 1.0; 
+	float  UG_Interpolation    = 1.0; 
+	int    UG_Type             = 0;  
 	int    UG_LastType = -1;
-	float  BC_EyeAccommodation = 1.0; // 0..1
-	int    BC_UseRaycast = 0;         // 0/1
-	float  BC_Radius = -1.0;          // -1 = default
+	float  BC_EyeAccommodation = 1.0; 
+	int    BC_UseRaycast = 0;         
+	float  BC_Radius = -1.0;         
 
-	// ---------- SINGLE SELECTION ----------
 	override void SetEditorObject(EditorObject editor_object)
 	{
-		// Determine type first
 		Object w = editor_object.GetWorldObject();
 		bool isUG     = UGTriggerObject.Cast(w) != null;
 		bool isCrumb  = UGBreadcrumb.Cast(w)    != null;
-
+		//Return normal GroupPrefab if not UGTriggerObject or UGBreadcrumb
 		if (!isUG && !isCrumb) {
-			// Non-UG/Crumb: build the stock General/Object UI
-			super.SetEditorObject(editor_object);
+			super.SetEditorObject(editor_object); 
 			return;
 		}
-
-		// We’re taking over UI: set m_EditorObject ourselves (super is skipped)
+		//Build modded GroupPrefab without scale
 		m_EditorObject = editor_object;
 		Name       = m_EditorObject.GetDisplayName();
     	Position   = m_EditorObject.GetPosition();
@@ -37,7 +32,7 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
     	general_group.Insert(new VectorPrefab("#STR_EDITOR_ORIENTATION", this, "Orientation"));
 
 		AddContent(general_group);
-		// ----- UG Trigger panel -----
+		//Build UGTriggerObject GroupPrefab
 		if (isUG)
 		{
 			UGTriggerObject ug = UGTriggerObject.Cast(w);
@@ -46,7 +41,7 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
 			UG_EyeAccommodation = ug.GetEyeAccommodation();
 			UG_Interpolation    = ug.GetInterpolation();
 			UG_Type             = ug.GetUGType();
-			UG_LastType         = UG_Type;
+			UG_LastType         = UG_Type; //Keep Trigger Type updated
 
 			GroupPrefab ug_group = new GroupPrefab("Underground Trigger", this, string.Empty);
 			ug_group.Insert(new VectorPrefab("Size", this, "UG_SizeVec"));
@@ -62,7 +57,7 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
 			AddContent(ug_group);
 		}
 
-		// ----- Breadcrumb panel -----
+		//Build UGBreadcrumb GroupPrefab
 		if (isCrumb)
 		{
 			UGBreadcrumb bc_obj = UGBreadcrumb.Cast(w);
@@ -83,10 +78,10 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
 			AddContent(bc_group);
 		}
 	}
-	// ---------- MULTI SELECTION ----------
+
 	override void SetMultipleEditorObjects(array<EditorObject> editor_objects)
+	//Same as above, but for multi-select
 	{
-		// Classify selection
 		int ugCount = 0;
 		int bcCount = 0;
 		foreach (EditorObject eo : editor_objects) {
@@ -95,13 +90,12 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
 			else if (UGBreadcrumb.Cast(w)) bcCount++;
 		}
 
-		// Mixed / other types -> use stock multi UI
 	if ((ugCount > 0 && bcCount > 0) || (ugCount == 0 && bcCount == 0)) {
 		super.SetMultipleEditorObjects(editor_objects);
 		return;
 	}
 
-	// We take over; keep the list so your Apply handlers can use it
+
 	m_EditorObjects = editor_objects;
 	m_EditorMultiObjectCommandController = new EditorMultiObjectCommandController(editor_objects);
 
@@ -180,7 +174,6 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
 		}
 	}
 
-	// ---------- APPLY / CHANGE HANDLERS ----------
 	protected vector UG_ClampSizeVec(vector v)
 	{
 		if (v[0] < 1.0) v[0] = 1.0;
@@ -226,7 +219,7 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
 		if (property_name == "UG_SizeVec")
 		{
 			UG_SizeVec = UG_ClampSizeVec(UG_SizeVec);
-			ug.SetSize(UG_SizeVec); // applies transform + trigger extents
+			ug.SetSize(UG_SizeVec);
 			return;
 		}
 
@@ -277,7 +270,6 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
 			{
 				trig.m_Accommodation      = UG_EyeAccommodation;
 				trig.m_InterpolationSpeed = UG_Interpolation;
-				// NOTE: Type is not exported; it's just a preset for EyeAccommodation
 			}
 		}
 	}

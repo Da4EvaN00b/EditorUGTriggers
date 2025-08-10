@@ -1,17 +1,20 @@
 modded class UndergroundTrigger
 {
-	void SetAccommodation(float v)     { m_Accommodation = v; }
-	void SetInterpolationSpeed(float v){ m_InterpolationSpeed = v; }
-    
+	void SetAccommodation(float v)
+    { 
+        m_Accommodation = v;
+    }
+	void SetInterpolationSpeed(float v)
+    { 
+        m_InterpolationSpeed = v; 
+    } 
     void SetExtentsFromSize(vector size)
 	{
-		vector e = size * 0.5;    // half-size per axis
+		vector e = size * 0.5;
 		SetExtents(-e, e);
 	}
 
-
-    //Over ride the existing trigger enter and leave events to call the client handler because the Server Handler was set to only run in dev mode, but we need it.  
-
+    //Over ride the existing trigger enter and leave events to call the client handler because the Server Handler was set to only run in dev mode, but we need it. 
 	override protected void OnEnterServerEvent(TriggerInsider insider) 
 	{
 		OnEnterClientEvent(insider);
@@ -63,7 +66,7 @@ modded class UndergroundTrigger
 
 modded class EditorObject
 {
-    // --- Keep UGTriggerObject free of the editor AABB (optional, as you had) ---
+    //Remove Bounding box
     override void EnableBoundingBox(bool enable)
     {
         Object w = GetWorldObject();
@@ -77,9 +80,9 @@ modded class EditorObject
 }
 modded class EditorGizmo
 {
+    //removing EditorGizmo for UGTriggerObjects
     override void Update(float dt)
     {
-        // If nothing selected, just do normal behavior
         auto editor = GetEditor();
         if (!editor)
         {
@@ -87,7 +90,6 @@ modded class EditorGizmo
             return;
         }
 
-        // Who’s on top of the selection stack?
         ref array<EditorObject> ordered = editor.GetSelectedObjectsOrdered();
         if (!ordered || ordered.Count() == 0)
         {
@@ -100,40 +102,32 @@ modded class EditorGizmo
 
         if (isUG)
         {
-            // Kill any current drag
             m_InteractionIndex  = -1;
             m_DragOffset        = vector.Zero;
             m_DragRotationOffset= vector.Zero;
 
-            // Hide the gizmo so there’s nothing to grab
+            // Hide the gizmo
             if (m_Gizmo)
                 m_Gizmo.SetFlags(EntityFlags.VISIBLE, false);
 
-            // Do NOT call base Update — skip collisions, transforms, etc.
             return;
         }
         else
         {
-            // Ensure gizmo is visible for normal objects
             if (m_Gizmo)
                 m_Gizmo.SetFlags(EntityFlags.VISIBLE, true);
 
-            // Normal gizmo behavior
             super.Update(dt);
         }
     }
 }
 modded class EditorObjectDragHandler
 {
+    // Re-apply UGTriggerObject after drag
     override void OnDragging(notnull EditorObject target, notnull array<EditorObject> additional_drag_targets)
     {
-        // Let the vanilla handler do its move/rotate first
         super.OnDragging(target, additional_drag_targets);
-
-        // Re-assert per-axis lengths on the main object (if it's our type)
         UG_ReapplyNonUniformScaleFor(target);
-
-        // And on all additional dragged objects too (multi-select)
         foreach (EditorObject eo : additional_drag_targets)
         {
             UG_ReapplyNonUniformScaleFor(eo);
@@ -146,25 +140,108 @@ modded class EditorObjectDragHandler
 
         Object w = eo.GetWorldObject();
         UGTriggerObject ugo = UGTriggerObject.Cast(w);
-        if (!ugo) return; // only care about our helper type
+        if (!ugo) return; 
 
-        // Read current (dragged) world transform
         vector m[4];
         w.GetTransform(m);
 
-        // Remove any "cube" scale editor imposed; keep directions
         vector ax0 = m[0].Normalized();
         vector ax1 = m[1].Normalized();
         vector ax2 = m[2].Normalized();
 
-        // Re-apply our intended per-axis lengths
         vector s = ugo.GetSize();
         m[0] = ax0 * s[0];
         m[1] = ax1 * s[1];
         m[2] = ax2 * s[2];
 
-        // Commit back
         w.SetTransform(m);
-        w.Update(); // keep visuals consistent with transform
+        w.Update(); 
+    }
+}
+
+//Add to Export File Menu in Edior
+modded class EditorCommandManager
+{
+	override void Init()
+	{
+        RegisterCommand(ExportUGTriggersToJSON);
+        super.Init();    
+    }
+}
+
+class ExportUGTriggersToJSON: EditorExportCommandBase
+{
+	override typename GetFileType() 
+	{
+		return EditorUGTriggerFile;
+	}
+	
+	override string GetName() 
+	{
+		return "Export UGTriggers (*.json)";
+	}
+}
+
+class EditorUGTriggerFile : EditorFileType
+{
+    override void Export(EditorSaveData data, string file, ExportSettings settings, eDialogExtraSetting dialog_setting)
+    {
+        UGTriggersExportRoot root = new UGTriggersExportRoot();
+        foreach (EditorObjectData obj_data : data.EditorObjects)
+        {
+            UGTriggerObject ug = UGTriggerObject.Cast(obj_data.WorldObject);
+            if (!ug) continue;
+
+            vector pos    = obj_data.Position;
+            vector orient = obj_data.Orientation;
+            vector size   = ug.GetSize();
+
+            float acc    = UG_Round2(ug.GetEyeAccommodation());
+            float interp = UG_Round2(ug.GetInterpolation());
+
+            UndergroundTrigger trig = ug.GetLinkedTrigger();
+
+            UGTriggersExport ex = new UGTriggersExport(pos, orient, size, acc, interp);
+
+            if (ug.GetUGType() == 2 && trig && trig.m_Data && trig.m_Data.Breadcrumbs && trig.m_Data.Breadcrumbs.Count() >= 2)
+            {
+                ex.Breadcrumbs = new array<ref UGBreadcrumbExport>();
+                foreach (JsonUndergroundAreaBreadcrumb b : trig.m_Data.Breadcrumbs)
+                {
+                    UGBreadcrumbExport eb = new UGBreadcrumbExport();
+                    eb.Position = new array<float>();
+                    eb.Position.Insert(b.Position.Get(0));
+                    eb.Position.Insert(b.Position.Get(1));
+                    eb.Position.Insert(b.Position.Get(2));
+                    eb.EyeAccommodation = UG_Round2(b.EyeAccommodation);
+                    eb.UseRaycast       = b.UseRaycast;
+                    eb.Radius           = b.Radius;
+                    ex.Breadcrumbs.Insert(eb);
+                }
+            }
+
+            root.Triggers.Insert(ex);
+        }
+
+        JsonFileLoader<UGTriggersExportRoot>.JsonSaveFile(file, root);
+    }
+
+    override string GetExtension()
+	{
+		return ".json";
+	}
+
+    override void GetValidExtensions(notnull inout array<ref Param2<string, string>> valid_extensions)
+	{
+		super.GetValidExtensions(valid_extensions);
+		valid_extensions.Insert(new Param2<string, string>("Object Spawner", "*.json"));
+	}
+}
+
+modded class EditorExportMenu
+{
+    void EditorExportMenu()
+    {
+        AddMenuButton(m_Editor.CommandManager[ExportUGTriggersToJSON]);
     }
 }
