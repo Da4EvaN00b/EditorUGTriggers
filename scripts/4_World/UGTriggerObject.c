@@ -3,6 +3,9 @@ class UGTriggerObject : Building
 	protected vector m_Size; // desired WORLD size X,Y,Z (meters)
 	protected UndergroundTrigger m_UndergroundTrigger;
 	protected ref Timer m_SyncTimer;
+	protected bool   m_RescanQueued;
+	protected vector m_LastPosePos;
+	protected vector m_LastPoseOri;
 
 	// Remember what the user picked in the dialog (0=Outer,1=Inner,2=Transitional)
 	// -1 means "follow live trigger"
@@ -60,7 +63,7 @@ class UGTriggerObject : Building
 	{
 		UndergroundTrigger trig = GetLinkedTrigger();
 		if (trig) return trig.m_Accommodation;
-		return 1.0; // default
+		return 1.0; 
 	}
 
 	void SetInterpolation(float v)
@@ -74,7 +77,7 @@ class UGTriggerObject : Building
 	{
 		UndergroundTrigger trig = GetLinkedTrigger();
 		if (trig) return trig.m_InterpolationSpeed;
-		return 1.0; // default
+		return 1.0; 
 	}
 
 	void UGTriggerObject()
@@ -83,9 +86,11 @@ class UGTriggerObject : Building
 		ApplySizeTransform();
 
 		CreateTriggerIfMissing();
-		UpdateTrigger(); // pose + extents
+		UpdateTrigger(); 
 
-		// Simple 20 Hz pose sync so rotations/moves are reflected immediately
+		m_LastPosePos = GetPosition();
+   		m_LastPoseOri = GetOrientation();
+	
 		m_SyncTimer = new Timer(CALL_CATEGORY_SYSTEM);
 		m_SyncTimer.Run(0.05, this, "UpdateTriggerPoseOnly", null, true);
 	}
@@ -106,6 +111,7 @@ class UGTriggerObject : Building
 		m_Size = s;
 		ApplySizeTransform();
 		UpdateTrigger();
+		QueueCrumbRescan();
 	}
 
 	void TrigSize(float dx, float dy, float dz)
@@ -115,6 +121,7 @@ class UGTriggerObject : Building
 		m_Size[2] = Math.Max(m_Size[2] + dz, 0.01);
 		ApplySizeTransform();
 		UpdateTrigger(); // pose + extents
+		QueueCrumbRescan();
 	}
 
 	void SetTransformData()
@@ -306,6 +313,18 @@ class UGTriggerObject : Building
 		}
 	}
 
+	void QueueCrumbRescan()
+	{
+	    if (m_RescanQueued) return;
+	    m_RescanQueued = true;
+	    GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(this.DoCrumbRescan, 100, false); // 0.1s throttle
+	}
+
+	void DoCrumbRescan()
+	{
+	    m_RescanQueued = false;
+	    if (GetUGType() == 2) { CollectBreadcrumbs(); } // Transitional only
+	}
 	// ===== Math / transform helpers =====
 	protected float UG_MapScaleToEyeAcco(float sc)
 	{
@@ -325,8 +344,6 @@ class UGTriggerObject : Building
 		// Strip scale
 		vector ax0 = P[0].Normalized();
 		vector ax1 = P[1].Normalized();
-
-		// Rebuild orthonormal basis
 		vector ax2 = Math3D.CrossProduct(ax0, ax1); ax2.Normalize();
 		ax1 = Math3D.CrossProduct(ax2, ax0);        ax1.Normalize();
 
@@ -337,6 +354,15 @@ class UGTriggerObject : Building
 		M[3] = GetPosition();
 
 		m_UndergroundTrigger.SetTransform(M);
+
+		vector curPos = GetPosition();
+    	vector curOri = GetOrientation();
+    	bool moved = (vector.Distance(curPos, m_LastPosePos) > 0.001) || (Math.AbsFloat(curOri[0] - m_LastPoseOri[0]) > 0.01) || (Math.AbsFloat(curOri[1] - m_LastPoseOri[1]) > 0.01) || (Math.AbsFloat(curOri[2] - m_LastPoseOri[2]) > 0.01);
+    	if (moved) {
+    	    m_LastPosePos = curPos;
+    	    m_LastPoseOri = curOri;
+    	    QueueCrumbRescan();
+		}	
 	}
 
 	protected void UpdateTriggerExtentsOnly()
@@ -375,4 +401,16 @@ float UG_Round2(float v)
 {
 	v = Math.Clamp(v, 0.0, 1.0);
 	return Math.Round(v * 100.0) / 100.0;
+}
+
+void UG_RescanTriggersAround(vector center, float radius)
+{
+    ref array<Object> objs = new array<Object>();
+    GetGame().GetObjectsAtPosition3D(center, radius, objs, null);
+    for (int i = 0; i < objs.Count(); i++) {
+        UGTriggerObject ug = UGTriggerObject.Cast(objs[i]);
+        if (!ug) continue;
+        if (ug.GetUGType() != 2) continue; // only Transitional cares
+        ug.QueueCrumbRescan();
+    }
 }

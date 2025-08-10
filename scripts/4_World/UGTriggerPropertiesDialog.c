@@ -6,9 +6,9 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
 	float  UG_Interpolation    = 1.0; // [0..1]
 	int    UG_Type             = 0;   // 0=Outer, 1=Inner, 2=Transitional
 	int    UG_LastType = -1;
-	float BC_EyeAccommodation = 1.0; // 0..1
-	int   BC_UseRaycast = 0;         // 0/1
-	float BC_Radius = -1.0;          // -1 = default
+	float  BC_EyeAccommodation = 1.0; // 0..1
+	int    BC_UseRaycast = 0;         // 0/1
+	float  BC_Radius = -1.0;          // -1 = default
 
 	// ---------- SINGLE SELECTION ----------
 	override void SetEditorObject(EditorObject editor_object)
@@ -49,7 +49,7 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
 			UG_LastType         = UG_Type;
 
 			GroupPrefab ug_group = new GroupPrefab("Underground Trigger", this, string.Empty);
-			ug_group.Insert(new VectorPrefab("Size (X,Y,Z)", this, "UG_SizeVec"));
+			ug_group.Insert(new VectorPrefab("Size", this, "UG_SizeVec"));
 
 			DropdownListPrefab<int> type_dropdown = new DropdownListPrefab<int>("Type", this, "UG_Type");
 			type_dropdown["Outer"] = 0;
@@ -75,10 +75,10 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
 			bc_group.Insert(new EditBoxNumberPrefab("Eye Accommodation", this, "BC_EyeAccommodation", 0.01, 0.0, 1.0));
 
 			DropdownListPrefab<int> bc_raycast = new DropdownListPrefab<int>("Use Raycast", this, "BC_UseRaycast");
-			bc_raycast["No"] = 0;  bc_raycast["Yes"] = 1;
+			bc_raycast["Yes"] = 1; bc_raycast["No"] = 0;
 			bc_group.Insert(bc_raycast);
 
-			bc_group.Insert(new EditBoxNumberPrefab("Radius", this, "BC_Radius", 0.1, -1.0, 10000.0));
+			bc_group.Insert(new EditBoxNumberPrefab("Radius", this, "BC_Radius", 0.1, -1.0, 1000.0));
 
 			AddContent(bc_group);
 		}
@@ -119,8 +119,8 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
 		bool seeded = false;
 		vector firstSize;
 		float firstAcc = 1.0;
-			float firstInterp = 1.0;
-			int   firstType = 0;
+		float firstInterp = 1.0;
+		int   firstType = 0;
 
 			foreach (EditorObject eo2 : editor_objects) {
 				UGTriggerObject ug = UGTriggerObject.Cast(eo2.GetWorldObject());
@@ -191,7 +191,10 @@ modded class EditorObjectPropertiesDialog : EditorDialogBase
 
 	override void PropertyChanged(string property_name)
 	{
-	super.PropertyChanged(property_name);
+	    if (property_name == "Show" || property_name == "Name" || property_name == "Position" || property_name == "Orientation")
+    	{
+    	    super.PropertyChanged(property_name);
+    	}
 
     if (property_name == "BC_EyeAccommodation" || property_name == "BC_UseRaycast" || property_name == "BC_Radius")
     {
