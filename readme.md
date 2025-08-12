@@ -4,7 +4,7 @@
   <img src="docs/banner.png" alt="Underground Trigger Banner" width="1500"/>
 </p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: CC BY-ND 4.0](https://img.shields.io/badge/License-CC_BY--ND_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nd/4.0/)
 [![Workshop](https://img.shields.io/badge/Steam-Workshop-blue.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=NEED_ID)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-black.svg)](https://github.com/bauvdel/EditorUGTriggers)
 
@@ -184,10 +184,15 @@ Typical underground trigger setup:
 
 ---
 
-## 🐛 Support
+## 🐛 Help and Support
 
 - **Discord:** **@bauvdel** & **@JinieJ**  
-- **Credits:** thanks to **@inclementdab** for creating [DayZ Editor](https://steamcommunity.com/sharedfiles/filedetails/?id=2250764298)
+
+---
+
+## 🐐 Credits
+
+- Thank you to **@inclementdab** for creating [DayZ Editor](https://steamcommunity.com/sharedfiles/filedetails/?id=2250764298)!
 
 ---
 
@@ -196,3 +201,14 @@ Typical underground trigger setup:
 [MIT License](LICENSE) — Free to use, modify, and share.
 
 > **No reason to repack. But you do you.**
+
+---
+
+## 🍺 Donate
+
+We created this project as we felt that there was a need for such a tool to curb the barrier to entry for a task like this. 
+This was made in our spare time, and we plan to continue to support and update this tool as DayZ and DayZ Editor grow and change.
+If you would like to support the project, or just want to say thanks, feel free to click the links below!
+
+[bauvdel on Ko-fi](https://ko-fi.com/bauvdel)
+[JinieJ on Patreon](https://www.patreon.com/JinieJZ)

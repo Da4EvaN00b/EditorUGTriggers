@@ -1,6 +1,7 @@
 class UGTriggerObject : Building
 {
 	protected vector m_Size;
+	protected UndergroundTrigger m_UndergroundTrigger;
 	protected ref Timer m_SyncTimer;
 	protected bool   m_RescanQueued;
 	protected vector m_LastPosePos;
