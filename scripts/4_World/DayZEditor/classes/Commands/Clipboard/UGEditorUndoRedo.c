@@ -15,7 +15,7 @@ class UGPropSnapshot
 	int    BC_Ray;
 	float  BC_Rad;
 
-	float  ExpireAt; //game time
+	float  ExpireAt;
 }
 
 class UGUndoCache
@@ -60,8 +60,7 @@ class UGUndoCache
 			s_Snaps.Insert(s2);
 		}
 	}
-
-	// Call every frame after input handling (cheap)
+	//There is almost certaintly a better way to do this, and im sure someone will tell me I'm an idiot in the comments.
 	static void Rehydrate(Editor editor)
 	{
 		if (!editor || s_Snaps.Count() == 0) return;
@@ -106,7 +105,7 @@ class UGUndoCache
 				continue;
 			}
 
-			// If type changed or not our class, drop it
+			// If type changed or not our class kill it
 			if (w.GetType() != s.Type) {
 				s_Snaps.Remove(j);
 			}

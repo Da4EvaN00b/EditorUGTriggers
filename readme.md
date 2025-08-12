@@ -14,9 +14,9 @@
 
 ## 📸 Screenshots
 
-| Trigger Properties | Breadcrumb Properties | Breadcrumbs in Trigger | Transitional Trigger | Testing Darkness | Livonia Example |
-|-----------------------|----------------------|------------------------|----------------------|---------------|---------------|
-| [<img src="docs/screenshot1.png" width="200"/>](docs/screenshot1.png) | [<img src="docs/screenshot4.png" width="200"/>](docs/screenshot4.png) | [<img src="docs/screenshot2.png" width="200"/>](docs/screenshot2.png) | [<img src="docs/screenshot3.png" width="200"/>](docs/screenshot3.png) | [<img src="docs/screenshot5.png" width="200"/>](docs/screenshot5.png) | [<img src="docs/screenshot6.png" width="200"/>](docs/screenshot6.png) |
+| Trigger Properties | Breadcrumb Properties | Breadcrumbs in Trigger | Testing Darkness | Livonia Example |
+|-----------------------|----------------------|------------------------|----------------------|------------------------------|
+| [<img src="docs/screenshot1.png" width="200"/>](docs/screenshot1.png) | [<img src="docs/screenshot4.png" width="200"/>](docs/screenshot4.png) | [<img src="docs/screenshot2.png" width="200"/>](docs/screenshot2.png) | [<img src="docs/screenshot5.png" width="200"/>](docs/screenshot5.png) | [<img src="docs/screenshot6.png" width="200"/>](docs/screenshot6.png) |
 
 
 ## ▶️ Tutorial Video
@@ -115,8 +115,6 @@ Read the **Bohemia Wiki Page:** [Underground Areas Configuration](https://commun
 
 >IMPORTANT: Due to the way Copy/Cut/Paste work, you may run in to some issues with the objects repopulating their properties if using Undo/Redo functions within Editor.
 
-
-
 ---
 
 ## 📂 Import / Export
@@ -181,12 +179,13 @@ Typical underground trigger setup:
 2. Pass through **Transitional Trigger** (with Breadcrumbs).
 3. End in **Inner Trigger** at deepest point.
 4. For alternate exits, add another **Transitional** → **Outer** path.
-
+>Please read the **Bohemia Wiki Page:** [Underground Areas Configuration](https://community.bistudio.com/wiki/DayZ:Underground_Areas_Configuration) for more information.
 ---
 
 ## 🐛 Help and Support
 
-- **Discord:** **@bauvdel** & **@JinieJ**  
+**Find us on Discord:** 
+**@bauvdel** & **@JinieJ**
 
 ---
 
@@ -198,7 +197,7 @@ Typical underground trigger setup:
 
 ## 📜 License
 
-[MIT License](LICENSE) — Free to use, modify, and share.
+[CC BY-ND 4.0](LICENSE) — Free to use, modify, and share.
 
 > **No reason to repack. But you do you.**
 

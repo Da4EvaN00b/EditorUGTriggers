@@ -284,7 +284,7 @@ class UGTriggerObject : Building
 		{
 			t.m_Data.Breadcrumbs = crumbs;
 
-			// If the user wanted Transitional do it now
+			// are you sure?
 			if (m_DesiredUGType == 2)
 				t.m_Type = EUndergroundTriggerType.TRANSITIONING;
 		}

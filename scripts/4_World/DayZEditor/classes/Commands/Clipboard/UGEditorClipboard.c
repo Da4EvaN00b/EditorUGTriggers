@@ -53,7 +53,7 @@ class UGClipboard
 			clip.Orientation = eo.GetOrientation();
 			clip.Name        = ""; // 
 
-			// UG Trigger?
+			// UGTrigger
 			UGTriggerObject ug = UGTriggerObject.Cast(w);
 			if (ug) {
 				clip.Size             = ug.GetSize();
@@ -64,7 +64,7 @@ class UGClipboard
 				continue;
 			}
 
-			// Breadcrumb?
+			// Breadcrumb
 			UGBreadcrumb bc = UGBreadcrumb.Cast(w);
 			if (bc) {
 				clip.IsBreadcrumb        = true;
@@ -257,7 +257,7 @@ class UGClipboard
 		Object w = eo.GetWorldObject();
 		if (!w) return;
 
-		// UG Trigger?
+		// UGTrigger
 		UGTriggerObject ug = UGTriggerObject.Cast(w);
 		if (ug) {
 			vector zeroSize = "0 0 0";
@@ -269,7 +269,7 @@ class UGClipboard
 			return;
 		}
 
-		// Breadcrumb?
+		// Breadcrumb
 		UGBreadcrumb bc = UGBreadcrumb.Cast(w);
 		if (bc && clip.IsBreadcrumb) {
 			bc.SetEyeAccommodation(clip.BC_EyeAccommodation);
