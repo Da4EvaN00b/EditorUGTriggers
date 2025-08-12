@@ -7,6 +7,10 @@
             <input name="UGTRIG_DecWidth"  loc="Decrease Trigger Width" />
             <input name="UGTRIG_IncHeight" loc="Increase Trigger Height" />
             <input name="UGTRIG_DecHeight" loc="Decrease Trigger Height" />
+            <input name="UGTRIG_Copy" loc="Copy Trigger" />
+            <input name="UGTRIG_Paste" loc="Paste Trigger" />
+            <input name="UGTRIG_Cut" loc="Cut Trigger" />
+            <input name="UGTRIG_Duplicate" loc="Duplicate Trigger" />
         </actions>
     </inputs>
 
@@ -28,6 +32,26 @@
         </input>
         <input name="UGTRIG_DecHeight">
             <btn name="kNUMPAD1"/>
+        </input>
+        <input name="UGTRIG_Copy">
+            <btn name="kLShift">
+               <btn name="kC"/>
+            </btn>
+        </input>
+        <input name="UGTRIG_Paste">
+            <btn name="kLShift">
+               <btn name="kV"/>
+            </btn>
+        </input>
+        <input name="UGTRIG_Cut">
+            <btn name="kLShift">
+               <btn name="kX"/>
+            </btn>
+        </input>
+        <input name="UGTRIG_Duplicate">
+            <btn name="kLShift">
+               <btn name="kJ"/>
+            </btn>
         </input>
     </preset>
 </modded_inputs>

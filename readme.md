@@ -8,18 +8,18 @@
 [![Workshop](https://img.shields.io/badge/Steam-Workshop-blue.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=NEED_ID)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-black.svg)](https://github.com/bauvdel/EditorUGTriggers)
 
-> Create, test, import, and export fully functional Underground Triggers right inside of DayZ Editor for both Console and PC!
+> Create, test, import, and export fully functional Underground Triggers with Breadcrumbs right inside of DayZ Editor for both Console and PC!
 
 ---
 
 ## 📸 Screenshots
 
-| UG Trigger Properties | Breacrumb Properties | Breadcrumbs in Trigger | Transitional Trigger | Darkness Live |
-|-----------------------|----------------------|------------------------|----------------------|---------------|
-| [<img src="docs/screenshot1.png" width="200"/>](docs/screenshot1.png) | [<img src="docs/screenshot4.png" width="200"/>](docs/screenshot4.png) | [<img src="docs/screenshot2.png" width="200"/>](docs/screenshot2.png) | [<img src="docs/screenshot3.png" width="200"/>](docs/screenshot3.png) | [<img src="docs/screenshot5.png" width="200"/>](docs/screenshot5.png) |
+| Trigger Properties | Breadcrumb Properties | Breadcrumbs in Trigger | Transitional Trigger | Testing Darkness | Livonia Example |
+|-----------------------|----------------------|------------------------|----------------------|---------------|---------------|
+| [<img src="docs/screenshot1.png" width="200"/>](docs/screenshot1.png) | [<img src="docs/screenshot4.png" width="200"/>](docs/screenshot4.png) | [<img src="docs/screenshot2.png" width="200"/>](docs/screenshot2.png) | [<img src="docs/screenshot3.png" width="200"/>](docs/screenshot3.png) | [<img src="docs/screenshot5.png" width="200"/>](docs/screenshot5.png) | [<img src="docs/screenshot6.png" width="200"/>](docs/screenshot6.png) |
 
 
-### ▶️ Tutorial Video
+## ▶️ Tutorial Video
 
 <a href="https://youtu.be/fJmMbl3bqE0" target="_blank">
   <img src="https://img.youtube.com/vi/fJmMbl3bqE0/maxresdefault.jpg" width="400"/>
@@ -38,7 +38,8 @@
 - Configure youre breadcrumbs with **Eye Accommodation**, **Raycast**, and **Radius**.
 - Breadcrumbs automatically attach to **Transitional Triggers**.
 - Export and import your **cfgundergroundtriggers.json**.
-- Works for both **PC** and **Console**!
+- Works for both **PC** and **Console** edits!
+- No need to use or learn **DayZ Diag**!
 
 ---
 
@@ -89,7 +90,9 @@ Read the **Bohemia Wiki Page:** [Underground Areas Configuration](https://commun
 
 ## ⌨️ Default Keybinds
 
-**UGTriggerObject Resizing**
+- **Keybinds** can be adjusted in the Options Menu.
+
+**Trigger Resizing**
 
 | Action            | Keybind  |
 |-------------------|----------|
@@ -100,9 +103,19 @@ Read the **Bohemia Wiki Page:** [Underground Areas Configuration](https://commun
 | Decrease Height   | Numpad <kbd>1</kbd> |
 | Increase Height   | Numpad <kbd>3</kbd> |
 
-
 - **Size** can also be adjusted in the UGTriggerObject Properties Window.
-- **Keybinds** can be adjusted in the Options Menu.
+
+**Trigger/Breadcrumb Commands**
+| Action            | Keybind  |
+|-------------------|----------|
+| Copy Triggers      | <kbd>Shift</kbd> + <kbd>C</kbd> |
+| Paste Triggers     | <kbd>Shift</kbd> + <kbd>V</kbd> |
+| Cut Triggers       | <kbd>Shift</kbd> + <kbd>X</kbd> |
+| Duplicate Triggers | <kbd>Shift</kbd> + <kbd>J</kbd> |
+
+>IMPORTANT: Due to the way Copy/Cut/Paste work, you may run in to some issues with the objects repopulating their properties if using Undo/Redo functions within Editor.
+
+
 
 ---
 
