@@ -57,7 +57,7 @@ Subscribe on Steam Workshop: [Workshop Link](https://steamcommunity.com/sharedfi
 **Manual**  
 1. Clone or download this repository.
 2. Pack mod using Addon Builder, Mikeros, etc.  
-2. Place .pbo in a `addons` folder insdie of a `@EditorUGTriggers` foler in your DayZ mods directory, or wherever you want to load local mods from.  
+2. Place .pbo in a `addons` folder insdie of a `@EditorUGTriggers` folder in your DayZ mods directory, or wherever you want to load local mods from.  
 3. Load **DayZ Editor** and **Dabs Framework** at a minimum to allow this mod to function.
 
 ---
