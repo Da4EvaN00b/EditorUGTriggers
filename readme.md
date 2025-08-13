@@ -5,7 +5,7 @@
 </p>
 
 [![License: CC BY-ND 4.0](https://img.shields.io/badge/License-CC_BY--ND_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nd/4.0/)
-[![Workshop](https://img.shields.io/badge/Steam-Workshop-blue.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=NEED_ID)
+[![Workshop](https://img.shields.io/badge/Steam-Workshop-blue.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=3547799357)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-black.svg)](https://github.com/bauvdel/EditorUGTriggers)
 
 > Create, test, import, and export fully functional Underground Triggers with Breadcrumbs right inside of DayZ Editor for both Console and PC!
@@ -19,14 +19,21 @@
 | [<img src="docs/screenshot1.png" width="200"/>](docs/screenshot1.png) | [<img src="docs/screenshot4.png" width="200"/>](docs/screenshot4.png) | [<img src="docs/screenshot2.png" width="200"/>](docs/screenshot2.png) | [<img src="docs/screenshot5.png" width="200"/>](docs/screenshot5.png) | [<img src="docs/screenshot6.png" width="200"/>](docs/screenshot6.png) |
 
 
-## ▶️ Tutorial Video
+## ▶️ Tutorial Videos
 
-<a href="https://youtu.be/fJmMbl3bqE0" target="_blank">
+**bauvdel's Video**
+<a href="https://www.youtube.com/watch?v=00fqSRH4lyU" target="_blank">
   <img src="https://img.youtube.com/vi/fJmMbl3bqE0/maxresdefault.jpg" width="400"/>
 </a>
 
-### <a href="https://youtu.be/fJmMbl3bqE0" target="_blank">Watch on YouTube</a>
+### <a href="https://www.youtube.com/watch?v=00fqSRH4lyU" target="_blank">Watch on YouTube</a>
 
+**JinieJ's Video**
+<a href="https://www.youtube.com/watch?v=00fqSRH4lyU" target="_blank">
+  <img src="https://img.youtube.com/vi/fJmMbl3bqE0/maxresdefault.jpg" width="400"/>
+</a>
+
+### <a href="https://www.youtube.com/watch?v=00fqSRH4lyU" target="_blank">Watch on YouTube</a>
 
 ---
 
@@ -34,8 +41,8 @@
 
 - Create and test **live working Underground Triggers** directly in DayZ Editor.
 - Size triggers **independently** on **X, Y, and Z axes**.
-- Condigure your trigger areas with **Trigger Type**, **Eye Accommodation**, and **Interpolation Speed**.
-- Configure youre breadcrumbs with **Eye Accommodation**, **Raycast**, and **Radius**.
+- Configure your trigger areas with **Trigger Type**, **Eye Accommodation**, and **Interpolation Speed**.
+- Configure your breadcrumbs with **Eye Accommodation**, **Raycast**, and **Radius**.
 - Breadcrumbs automatically attach to **Transitional Triggers**.
 - Export and import your **cfgundergroundtriggers.json**.
 - Works for both **PC** and **Console** edits!
@@ -55,7 +62,7 @@
 ## 🛠 Installation
 
 **Steam Workshop**  
-Subscribe on Steam Workshop: [Workshop Link](https://steamcommunity.com/sharedfiles/filedetails/?id=NEED_ID)
+Subscribe on Steam Workshop: [Workshop Link](https://steamcommunity.com/sharedfiles/filedetails/?id=3547799357)
 
 **Manual**  
 1. Clone or download this repository.
@@ -86,6 +93,10 @@ Read the **Bohemia Wiki Page:** [Underground Areas Configuration](https://commun
    - **Use Raycast** (True or False)
    - **Radius** (-1 = default)
 
+### Cut/Copy/Paste/Duplicate
+1. All **Trigger** and **Breadcrumb** objects should be Copied, Pasted, Cut, and Duplicated using the modded clipboard system to keep the triggers and data saved.
+2. Use **Modifier** key <kbd>Shift</kbd> instead of <kbd>CTRL</kbd> with the deafault cut, copy, paste, and duplicate keybinds (<kbd>C</kbd> , <kbd>V</kbd>,  <kbd>X</kbd>, <kbd>J</kbd>)
+3. All keybinds listed below. 
 ---
 
 ## ⌨️ Default Keybinds
@@ -119,8 +130,8 @@ Read the **Bohemia Wiki Page:** [Underground Areas Configuration](https://commun
 
 ## 📂 Import / Export
 
-Files are imported/exported from your **normal DayZ Editor files directory**.  
-Default export format:
+Files are imported/exported from the default **DayZ Editor** files directory.  
+# Default export format:
 
 ```json
 {
@@ -191,13 +202,13 @@ Typical underground trigger setup:
 
 ## 🐐 Credits
 
-- Thank you to **@inclementdab** for creating [DayZ Editor](https://steamcommunity.com/sharedfiles/filedetails/?id=2250764298)!
+- Thank you to **@inclementdab** for creating [DayZ Editor](https://steamcommunity.com/sharedfiles/filedetails/?id=2250764298)❤️! 
 
 ---
 
 ## 📜 License
 
-[CC BY-ND 4.0](LICENSE) — Free to use, modify, and share.
+[CC BY-ND 4.0](LICENSE) — Free to use, modify, and share non commercially..
 
 > **No reason to repack. But you do you.**
 
@@ -210,4 +221,4 @@ This was made in our spare time, and we plan to continue to support and update t
 If you would like to support the project, or just want to say thanks, feel free to click the links below!
 
 [bauvdel on Ko-fi](https://ko-fi.com/bauvdel)
-[JinieJ on Patreon](https://www.patreon.com/JinieJZ)
+[JinieJ on BMaC](https://buymeacoffee.com/jiniej)
