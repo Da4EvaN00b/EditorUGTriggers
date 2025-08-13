@@ -16,16 +16,14 @@
 
 | Trigger Properties | Breadcrumb Properties | Breadcrumbs in Trigger | Testing Darkness | Livonia Example |
 |-----------------------|----------------------|------------------------|----------------------|------------------------------|
-| [<img src="docs/screenshot1.png" width="200"/>](docs/screenshot1.png) | [<img src="docs/screenshot4.png" width="200"/>](docs/screenshot4.png) | [<img src="docs/screenshot2.png" width="200"/>](docs/screenshot2.png) | [<img src="docs/screenshot5.png" width="200"/>](docs/screenshot5.png) | [<img src="docs/screenshot6.png" width="200"/>](docs/screenshot6.png) |
+| [<img src="docs/screenshot1.png" width="250"/>](docs/screenshot1.png) | [<img src="docs/screenshot4.png" width="250"/>](docs/screenshot4.png) | [<img src="docs/screenshot2.png" width="250"/>](docs/screenshot2.png) | [<img src="docs/screenshot5.png" width="250"/>](docs/screenshot5.png) | [<img src="docs/screenshot6.png" width="250"/>](docs/screenshot6.png) |
 
 
 ## ▶️ Tutorial Videos
-<p align="center">
+| bauvdel's Video | JinieJ's Video |
+|-----------------------|----------------------|
+| [<img src="docs/bauvdelthumb.png" width="500"/>](https://www.youtube.com/watch?v=00fqSRH4lyU)| [<img src="docs/jiniethumb.png" width="500"/>](https://www.youtube.com/watch?v=DE9fD9sEZGE) |
 
-[![bauvdel's Video](https://markdown-videos-api.jorgenkh.no/url?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D00fqSRH4lyU)](https://www.youtube.com/watch?v=00fqSRH4lyU)
-
-[![JinieJ's Video](https://markdown-videos-api.jorgenkh.no/url?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D00fqSRH4lyU)](https://www.youtube.com/SOONtm)
-</p>
 
 ---
 
@@ -47,7 +45,7 @@
 - [Dabs Framework](https://steamcommunity.com/sharedfiles/filedetails/?id=2545327648)  
 - [DayZ Editor](https://steamcommunity.com/sharedfiles/filedetails/?id=2250764298)  
 
-> **Note:** This mod is for **DayZ Editor use only** — not intended to run on a server or standalone.
+> **IMPORTANT:** This mod is for **DayZ Editor use only** — not intended to run on a server or standalone and will NOT work. 
 
 ---
 
@@ -87,13 +85,19 @@ Read the **Bohemia Wiki Page:** [Underground Areas Configuration](https://commun
 
 ### Cut/Copy/Paste/Duplicate
 1. All **Trigger** and **Breadcrumb** objects should be Copied, Pasted, Cut, and Duplicated using the modded clipboard system to keep the triggers and data saved.
-2. Use **Modifier** key <kbd>Shift</kbd> instead of <kbd>CTRL</kbd> with the deafault cut, copy, paste, and duplicate keybinds (<kbd>C</kbd> , <kbd>V</kbd>,  <kbd>X</kbd>, <kbd>J</kbd>)
+2. Use **Modifier** key <kbd>Shift</kbd> instead of <kbd>CTRL</kbd> with the default cut, copy, paste, and duplicate keybinds (<kbd>C</kbd> , <kbd>V</kbd>,  <kbd>X</kbd>, <kbd>J</kbd>)
 3. All keybinds listed below. 
+
+### Import/Export
+- Importing and Exporting is done through the Editor File Menu, just as if you were importing or exporting anything else. 
+- Look for the Import/Export UG Triggers (*.json) option in the menu. 
+- Triggers and breadcrumbs can ONLY be saved this way. Saving them as a .dze will not make them work.
+
 ---
 
 ## ⌨️ Default Keybinds
 
-- **Keybinds** can be adjusted in the Options Menu.
+- **Keybinds** can be adjusted in the Options Menu. We know that not everyone has a numpad!
 
 **Trigger Resizing**
 
