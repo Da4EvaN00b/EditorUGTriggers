@@ -83,7 +83,7 @@ Read the **Bohemia Wiki Page:** [Underground Areas Configuration](https://commun
    - **Use Raycast** (True or False)
    - **Radius** (-1 = default)
 
-### Cut/Copy/Paste/Duplicate
+### Copy/Paste/Cut/Duplicate
 1. All **Trigger** and **Breadcrumb** objects should be Copied, Pasted, Cut, and Duplicated using the modded clipboard system to keep the triggers and data saved.
 2. Use **Modifier** key <kbd>Shift</kbd> instead of <kbd>CTRL</kbd> with the default cut, copy, paste, and duplicate keybinds (<kbd>C</kbd> , <kbd>V</kbd>,  <kbd>X</kbd>, <kbd>J</kbd>)
 3. All keybinds listed below. 
@@ -191,14 +191,18 @@ Typical underground trigger setup:
 
 ## 🐛 Help and Support
 
-**Find us on Discord:** 
-**@bauvdel** & **@JinieJ**
+We both have full time jobs, but we will do our best to keep this updated and fix bugs as they happen. Please find us on discord or create an issue on GitHub!
+
+**Discord:** **@bauvdel** & **@JinieJ**
+
 
 ---
 
 ## 🐐 Credits
 
-- Thank you to **@inclementdab** for creating [DayZ Editor](https://steamcommunity.com/sharedfiles/filedetails/?id=2250764298)❤️! 
+- Thank you to **@inclementdab** for creating DayZ Editor ❤️! 
+[DayZ Editor on Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2250764298)
+[DayZ Editor on Github](https://github.com/InclementDab/DayZ-Editor)
 
 ---
 
