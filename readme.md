@@ -8,7 +8,7 @@
 [![Workshop](https://img.shields.io/badge/Steam-Workshop-blue.svg)](https://steamcommunity.com/sharedfiles/filedetails/?id=3547799357)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-black.svg)](https://github.com/bauvdel/EditorUGTriggers)
 
-> Create, test, import, and export fully functional Underground Triggers with Breadcrumbs right inside of DayZ Editor for both Console and PC!
+> Create, test, import, and export fully functional Underground Triggers with Breadcrumbs right inside of DayZ Editor!
 
 ---
 
@@ -20,20 +20,12 @@
 
 
 ## ▶️ Tutorial Videos
+<p align="center">
 
-**bauvdel's Video**
-<a href="https://www.youtube.com/watch?v=00fqSRH4lyU" target="_blank">
-  <img src="https://img.youtube.com/vi/fJmMbl3bqE0/maxresdefault.jpg" width="400"/>
-</a>
+[![bauvdel's Video](https://markdown-videos-api.jorgenkh.no/url?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D00fqSRH4lyU)](https://www.youtube.com/watch?v=00fqSRH4lyU)
 
-### <a href="https://www.youtube.com/watch?v=00fqSRH4lyU" target="_blank">Watch on YouTube</a>
-
-**JinieJ's Video**
-<a href="https://www.youtube.com/watch?v=00fqSRH4lyU" target="_blank">
-  <img src="https://img.youtube.com/vi/fJmMbl3bqE0/maxresdefault.jpg" width="400"/>
-</a>
-
-### <a href="https://www.youtube.com/watch?v=00fqSRH4lyU" target="_blank">Watch on YouTube</a>
+[![JinieJ's Video](https://markdown-videos-api.jorgenkh.no/url?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D00fqSRH4lyU)](https://www.youtube.com/SOONtm)
+</p>
 
 ---
 
@@ -220,5 +212,5 @@ We created this project as we felt that there was a need for such a tool to curb
 This was made in our spare time, and we plan to continue to support and update this tool as DayZ and DayZ Editor grow and change.
 If you would like to support the project, or just want to say thanks, feel free to click the links below!
 
-[bauvdel on Ko-fi](https://ko-fi.com/bauvdel)
-[JinieJ on BMaC](https://buymeacoffee.com/jiniej)
+- [bauvdel on Ko-fi](https://ko-fi.com/bauvdel)
+- [JinieJ on BMaC](https://buymeacoffee.com/jiniej)
