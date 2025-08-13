@@ -22,7 +22,7 @@
 ## ▶️ Tutorial Videos
 | bauvdel's Video | JinieJ's Video |
 |-----------------------|----------------------|
-| [<img src="docs/bauvdelthumb.png" width="500"/>](https://www.youtube.com/watch?v=00fqSRH4lyU)| [<img src="docs/jiniethumb.png" width="500"/>](https://www.youtube.com/watch?v=DE9fD9sEZGE) |
+| [<img src="docs/bauvdelthumb.png" width="500"/>](https://www.youtube.com/watch?v=00fqSRH4lyU)| [<img src="docs/jiniethumb.png" width="500"/>](https://www.youtube.com/watch?v=scCh_MT0ie8) |
 
 
 ---
