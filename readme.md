@@ -128,6 +128,7 @@ Read the **Bohemia Wiki Page:** [Underground Areas Configuration](https://commun
 ## 📂 Import / Export
 
 Files are imported/exported from the default **DayZ Editor** files directory.  
+
 # Default export format:
 
 ```json
@@ -177,6 +178,9 @@ Files are imported/exported from the default **DayZ Editor** files directory.
     ]
 }
 ```
+## New!
+Checkbox option to remove Triggers after export to clean up your .dze file for saving.
+>IMPORTANT: THIS WILL DELETE YOUR TRIGGERS AND BREADCRUMBS. DO NOT RELY ON UNDO! YOU'VE BEEN WARNED!
 
 ---
 

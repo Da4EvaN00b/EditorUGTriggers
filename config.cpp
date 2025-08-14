@@ -19,9 +19,14 @@ class CfgMods
 		credits = "InclementDab";
 		inputs = "EditorUGTriggers/Scripts/Data/Inputs.xml";
 		type = "mod";
-		dependencies[] = {"World"};
+		dependencies[] = {"Game", "World"};
 		class defs
 		{
+			class gameScriptModule
+			{
+				value = "";
+				files[] = {"EditorUGTriggers/scripts/3_Game"};
+			};
 			class worldScriptModule
 			{
 				value = "";
