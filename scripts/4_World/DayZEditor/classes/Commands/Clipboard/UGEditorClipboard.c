@@ -51,7 +51,7 @@ class UGClipboard
 			clip.Type        = eo.GetType();
 			clip.Position    = eo.GetPosition();
 			clip.Orientation = eo.GetOrientation();
-			clip.Name        = ""; // 
+			clip.Name        = eo.GetDisplayName(); 
 
 			// UGTrigger
 			UGTriggerObject ug = UGTriggerObject.Cast(w);
