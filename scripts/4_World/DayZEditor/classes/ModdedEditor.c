@@ -8,6 +8,10 @@ modded class Editor
 
         UAInputAPI input_api = GetUApi();
         if (!input_api) return;
+        // - Select All
+        if (input_api.GetInputByName("UGTRIG_SelectAll").LocalPress()) {
+            UG_SelectAllUGObjects();
+        }
 
         // - Copy
         if (input_api.GetInputByName("UGTRIG_Copy").LocalPress()) {

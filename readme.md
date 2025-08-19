@@ -113,12 +113,13 @@ Read the **Bohemia Wiki Page:** [Underground Areas Configuration](https://commun
 - **Size** can also be adjusted in the UGTriggerObject Properties Window.
 
 **Trigger/Breadcrumb Commands**
-| Action            | Keybind  |
-|-------------------|----------|
-| Copy Triggers      | <kbd>Shift</kbd> + <kbd>C</kbd> |
-| Paste Triggers     | <kbd>Shift</kbd> + <kbd>V</kbd> |
-| Cut Triggers       | <kbd>Shift</kbd> + <kbd>X</kbd> |
-| Duplicate Triggers | <kbd>Shift</kbd> + <kbd>J</kbd> |
+| Action             | Keybind  |
+|--------------------|----------|
+| Copy Triggers       | <kbd>Shift</kbd> + <kbd>C</kbd> |
+| Paste Triggers      | <kbd>Shift</kbd> + <kbd>V</kbd> |
+| Cut Triggers        | <kbd>Shift</kbd> + <kbd>X</kbd> |
+| Duplicate Triggers  | <kbd>Shift</kbd> + <kbd>J</kbd> |
+| Select All Triggers | <kbd>Shift</kbd> + <kbd>B</kbd> |
 
 >IMPORTANT: Due to the way Copy/Cut/Paste work, you may run in to some issues with the objects repopulating their properties if using Undo/Redo functions within Editor.
 
@@ -127,6 +128,7 @@ Read the **Bohemia Wiki Page:** [Underground Areas Configuration](https://commun
 ## 📂 Import / Export
 
 Files are imported/exported from the default **DayZ Editor** files directory.  
+
 # Default export format:
 
 ```json
@@ -176,6 +178,9 @@ Files are imported/exported from the default **DayZ Editor** files directory.
     ]
 }
 ```
+## New!
+Checkbox option to remove Triggers after export to clean up your .dze file for saving.
+>IMPORTANT: THIS WILL DELETE YOUR TRIGGERS AND BREADCRUMBS. DO NOT RELY ON UNDO! YOU'VE BEEN WARNED!
 
 ---
 

@@ -41,6 +41,17 @@ class EditorUGTriggerFile : EditorFileType
         }
 
         JsonFileLoader<UGTriggersExportRoot>.JsonSaveFile(file, root);
+
+        // - Delete on Export if box is selected
+        bool removeUG = UGExportState.RemoveUGAfterExport;
+        UGExportState.RemoveUGAfterExport = false; // reset
+
+        if (removeUG) {
+            int removed = UG_DeleteAllUGObjects(GetEditor());
+            GetEditor().GetEditorHud().CreateNotification(string.Format("[UG Triggers] Exported and removed %1 UG objects", removed));
+        } else {
+            GetEditor().GetEditorHud().CreateNotification("[UG Triggers] Export complete");
+        }
     }
     //Import UGTriggers from JSON
     override EditorSaveData Import(string file, ImportSettings settings)
@@ -67,7 +78,7 @@ class EditorUGTriggerFile : EditorFileType
             int ugType = 0;
             if (t.Breadcrumbs && t.Breadcrumbs.Count() >= 2) {
                 ugType = 2;
-            } else if (acc <= 0.01) {
+            } else if (acc <= 0.5) {
                 ugType = 1;
             } else {
                 ugType = 0;
