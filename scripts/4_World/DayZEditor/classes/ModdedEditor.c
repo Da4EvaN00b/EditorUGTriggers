@@ -128,34 +128,4 @@ modded class Editor
             w.Update();
         }
     }
-
-    // - Delete Override
-
-    override void DeleteObject(EditorObject editor_object, bool create_undo = true)
-    {
-        if (editor_object && editor_object.IsVisible() && !editor_object.IsLocked()) {
-            UGUndoCache.RememberEO(editor_object);
-        }
-        super.DeleteObject(editor_object, create_undo);
-    }
-
-    override void DeleteObjects(notnull array<EditorObject> editor_objects)
-    {
-        foreach (EditorObject eo : editor_objects) {
-            if (!eo) continue;
-            if (eo.IsLocked()) continue;
-            UGUndoCache.RememberEO(eo);
-        }
-        super.DeleteObjects(editor_objects);
-    }
-
-    override void DeleteObjects(EditorObjectMap editor_object_map, bool create_undo = true)
-    {
-        foreach (int id, EditorObject eo : editor_object_map) {
-            if (!eo) continue;
-            if (!eo.IsVisible() || eo.IsLocked()) continue;
-            UGUndoCache.RememberEO(eo);
-        }
-        super.DeleteObjects(editor_object_map, create_undo);
-    }
 }
