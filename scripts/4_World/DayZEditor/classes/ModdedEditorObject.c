@@ -1,14 +1,24 @@
 modded class EditorObject
 {
-    //Remove Bounding box
-    override void EnableBoundingBox(bool enable)
-    {
-        Object w = GetWorldObject();
-        if (UGTriggerObject.Cast(w))
-        {
-            DestroyBoundingBox();
-            return;
-        }
-        super.EnableBoundingBox(enable);
-    }
+	override void SetBoundingBox(bool state, bool set_flags = false)
+	{
+		Object w = GetWorldObject();
+		if (UGTriggerObject.Cast(w)) {
+			if (set_flags) {
+				m_Data.Flags &= ~EditorObjectFlags.BBOX;
+			}
+			HideBoundingBox();
+			return;
+		}
+
+		super.SetBoundingBox(state, set_flags);
+	}
+
+	override void ShowBoundingBox()
+	{
+		if (UGTriggerObject.Cast(GetWorldObject())) {
+			return;
+		}
+		super.ShowBoundingBox();
+	}
 }
