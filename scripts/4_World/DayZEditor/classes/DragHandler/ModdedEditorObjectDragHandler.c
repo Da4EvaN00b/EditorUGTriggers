@@ -1,8 +1,10 @@
 modded class EditorObjectDragHandler
 {
+
     override void OnDragging(notnull EditorObject target, notnull array<EditorObject> additional_drag_targets)
     {
         super.OnDragging(target, additional_drag_targets);
+        
         UG_FixDuringDrag(target);
         foreach (EditorObject eo : additional_drag_targets) {
             UG_FixDuringDrag(eo);
@@ -36,6 +38,7 @@ modded class EditorObjectDragHandler
         vector bc0 = eo.GetBottomCenter();
         vector m[4];
         w.GetTransform(m);
+
         vector ax0 = m[0].Normalized();
         vector ax1 = m[1].Normalized();
         vector ax2 = m[2].Normalized();
@@ -57,24 +60,26 @@ modded class EditorObjectDragHandler
         w.SetTransform(m);
         w.Update();
 
-        vector bc1 = eo.GetBottomCenter();
-        vector delta = bc0 - bc1;
+        // Don't apply position corrections during CTRL+drag (camera plane placement)
+        if (!GetEditor().IsCtrlDown()) {
+            vector bc1 = eo.GetBottomCenter();
+            vector delta = bc0 - bc1;
 
-        if (GetEditor().IsShiftDown()) {
-
-            if (delta != vector.Zero) {
-                w.GetTransform(m);
-                m[3] = m[3] + delta;
-                w.SetTransform(m);
-                eo.Update();
-            }
-        } else {
-            float dy = delta[1];
-            if (Math.AbsFloat(dy) > 0.0001) {
-                vector p = eo.GetPosition();
-                p[1] = p[1] + dy;
-                eo.SetPosition(p);
-                eo.Update();
+            if (GetEditor().IsShiftDown()) {
+                if (delta != vector.Zero) {
+                    w.GetTransform(m);
+                    m[3] = m[3] + delta;
+                    w.SetTransform(m);
+                    eo.Update();
+                }
+            } else {
+                float dy = delta[1];
+                if (Math.AbsFloat(dy) > 0.0001) {
+                    vector p = eo.GetPosition();
+                    p[1] = p[1] + dy;
+                    eo.SetPosition(p);
+                    eo.Update();
+                }
             }
         }
     }
