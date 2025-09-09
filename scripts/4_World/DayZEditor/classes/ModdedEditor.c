@@ -128,4 +128,24 @@ modded class Editor
             w.Update();
         }
     }
+    
+    override int DeleteObjects(notnull array<EditorObject> editor_objects, bool create_undo = true, bool send_net_message = true)
+    {
+        foreach (EditorObject eo : editor_objects) {
+            if (!eo) continue;
+            if (eo.IsLocked()) continue;
+            UGUndoCache.RememberEO(eo);
+        }
+        return super.DeleteObjects(editor_objects, create_undo, send_net_message);
+    }
+
+    override int DeleteObjects(EditorObjectMap editor_object_map, bool create_undo = true, bool send_net_message = true)
+    {
+        foreach (int id, EditorObject eo : editor_object_map) {
+            if (!eo) continue;
+            if (!eo.IsVisible() || eo.IsLocked()) continue;
+            UGUndoCache.RememberEO(eo);
+        }
+        return super.DeleteObjects(editor_object_map, create_undo, send_net_message);
+    }
 }

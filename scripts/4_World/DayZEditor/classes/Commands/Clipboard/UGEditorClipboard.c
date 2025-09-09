@@ -88,8 +88,12 @@ class UGClipboard
 			return 0;
 		}
 
+		array<EditorObject> objects_to_delete = new array<EditorObject>();
 		foreach (EditorObject eo : selection) {
-			if (eo) editor.DeleteObject(eo);
+			if (eo) objects_to_delete.Insert(eo);
+		}
+		if (objects_to_delete.Count() > 0) {
+			editor.DeleteObjects(objects_to_delete);
 		}
 		return n;
 	}
